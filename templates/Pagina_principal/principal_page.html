@@ -3,105 +3,205 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Landing Page</title>
+  <title>noUva | Choose your major with confidence</title>
+  <meta name="description" content="Explore majors, listen to podcasts and take challenges to find the career that fits you.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { ink: '#00224F', deep: '#001737', grape: '#7C4DFF', sun: '#FFD54A', paper: '#F5F6FB' },
+        fontFamily: { display: ['"Bricolage Grotesque"', 'sans-serif'], body: ['"DM Sans"', 'sans-serif'] }
+      } }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -0.02em; }
+    :focus-visible { outline: 3px solid #FFD54A; outline-offset: 3px; border-radius: 6px; }
+
+    /* One orchestrated moment: hero entrance */
+    @keyframes rise { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+    .rise { opacity: 0; animation: rise .7s cubic-bezier(.2,.7,.2,1) forwards; }
+    .d1 { animation-delay: .05s } .d2 { animation-delay: .18s } .d3 { animation-delay: .3s } .d4 { animation-delay: .5s }
+    @keyframes bar { from { width: 0 } to { width: 62% } }
+    .bar { animation: bar 1.6s .9s ease-out forwards; width: 0; }
+    @media (prefers-reduced-motion: reduce) {
+      .rise { animation: none; opacity: 1; }
+      .bar { animation: none; width: 62%; }
+      html { scroll-behavior: auto; }
+    }
+    .hero-bg {
+      background:
+        radial-gradient(60rem 30rem at 85% -10%, rgba(124,77,255,.45), transparent 60%),
+        radial-gradient(40rem 25rem at -10% 110%, rgba(255,213,74,.12), transparent 60%),
+        #00224F;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-paper text-ink antialiased">
+
   <!-- Header -->
-  <header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <!-- Logo -->
-      <img src="{{ url_for('static', filename='logoFondoBlanco.jpeg') }}" 
-           alt="noUva Logo" class="w-32 h-16 object-contain -ml-4">
-      
-      <!-- Login/SignUp -->
-      <nav class="space-x-6 hidden md:flex">
-        <a href="/login" class="hover:text-indigo-600 transition font-bold text-2xl"> Sign Up / Log in </a>
+  <header class="sticky top-0 z-50 bg-white/90 backdrop-blur border-b border-ink/10">
+    <div class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
+      <a href="#top" aria-label="noUva home">
+        <img src="{{ url_for('static', filename='logoFondoBlanco.jpeg') }}" alt="noUva logo" class="h-12 w-28 object-contain -ml-2">
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-medium" aria-label="Main">
+        <a href="#features" class="hover:text-grape transition-colors">Features</a>
+        <a href="#how" class="hover:text-grape transition-colors">How it works</a>
+        <a href="#pricing" class="hover:text-grape transition-colors">Pricing</a>
       </nav>
+      <a href="/login" class="rounded-full bg-ink text-white text-sm font-bold px-5 py-2.5 hover:bg-grape transition-colors">Sign up / Log in</a>
     </div>
   </header>
- 
-  <!-- Hero Section -->
-  <section class="text-center py-20 bg-blue-950 text-white">
-    <h2 class="text-4xl md:text-6xl font-bold mb-6" data-aos="fade-up">NOUVA</h2>
-    <p class="text-lg md:text-xl mb-8" data-aos="fade-up" data-aos-delay="200">The first step to your future!</p>
-  </section>
- 
-  <!-- Features -->
-  <section id="features" class="max-w-7xl mx-auto py-20 px-6 grid md:grid-cols-3 gap-10">
-    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in">
-      <h3 class="text-xl font-bold mb-4">⚡Easy to understand</h3>
-      <p>All the people can use it</p>
-    </div>
-    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="200">
-      <h3 class="text-xl font-bold mb-4">Accessibility</h3>
-      <p>You can use it wherever, whenenver.</p>
-    </div>
-    <div class="bg-white p-6 rounded-2xl shadow hover:shadow-lg transition" data-aos="zoom-in" data-aos-delay="400">
-      <h3 class="text-xl font-bold mb-4">Informative</h3>
-      <p>All the information you need to prepare yourself in the future is here</p>
-    </div>
-  </section>
- 
-  <!-- About Section -->
-  <section id="about" class="bg-gray-100 py-20">
-    <div class="max-w-5xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">About This Website</h2>
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="bg-white p-8 rounded-2xl shadow" data-aos="fade-up">
-          <h3 class="text-xl font-bold mb-4">Who We Are</h3>
-          <p>We are a team dedicated to provide you the best experience for your academical future</p>
+
+  <main id="top">
+    <!-- Hero -->
+    <section class="hero-bg text-white">
+      <div class="max-w-6xl mx-auto px-5 py-20 md:py-28 grid md:grid-cols-2 gap-14 items-center">
+        <div>
+          <h1 class="rise d1 text-5xl md:text-7xl font-extrabold leading-[1.02]">Pick your major before you pick your classes.</h1>
+          <p class="rise d2 mt-6 text-lg md:text-xl text-white/80 max-w-md leading-relaxed">noUva helps you explore careers, learn from podcasts and test your interests with short challenges, so your first step toward the future is a sure one.</p>
+          <div class="rise d3 mt-9 flex flex-wrap gap-3">
+            <a href="/login" class="rounded-full bg-sun text-ink font-bold px-7 py-3.5 hover:bg-white transition-colors">Create free account</a>
+            <a href="#pricing" class="rounded-full border border-white/30 font-bold px-7 py-3.5 hover:bg-white/10 transition-colors">See plans</a>
+          </div>
         </div>
-        <div class="bg-white p-8 rounded-2xl shadow" data-aos="fade-up" data-aos-delay="200">
-          <h3 class="text-xl font-bold mb-4">What We Do</h3>
-          <p>Our mission is to simplify, help you to decided and prepare you to be sure about the major you want</p>
-        </div>
-        <div class="bg-white p-8 rounded-2xl shadow" data-aos="fade-up" data-aos-delay="400">
-          <h3 class="text-xl font-bold mb-4">Why Choose Us</h3>
-          <p>The first and only platform where you can explore and discover all the things that you will need in your future</p>
+
+        <!-- Product preview built in CSS -->
+        <div class="rise d4 relative" aria-hidden="true">
+          <div class="rounded-3xl bg-white text-ink p-6 shadow-2xl shadow-black/40 md:rotate-2">
+            <p class="text-sm font-bold text-grape">Daily challenge</p>
+            <p class="font-display text-2xl font-bold mt-2 leading-snug">Which Monday sounds most like yours?</p>
+            <ul class="mt-5 space-y-3 text-sm font-medium">
+              <li class="rounded-xl border border-ink/15 px-4 py-3">Fixing a bug before the team wakes up</li>
+              <li class="rounded-xl border-2 border-grape bg-grape/10 px-4 py-3 flex justify-between"><span>Balancing the budget for a new project</span><span class="text-grape">Selected</span></li>
+              <li class="rounded-xl border border-ink/15 px-4 py-3">Interviewing patients at a clinic</li>
+            </ul>
+          </div>
+          <div class="rounded-2xl bg-deep border border-white/15 p-4 mt-4 md:-ml-8 md:w-4/5 flex items-center gap-4 md:-rotate-1">
+            <div class="h-11 w-11 rounded-full bg-sun text-ink grid place-items-center font-bold">&#9654;</div>
+            <div class="flex-1">
+              <p class="text-sm font-bold">A day as an accountant</p>
+              <div class="h-1.5 rounded-full bg-white/15 mt-2"><div class="bar h-1.5 rounded-full bg-sun"></div></div>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </section>
- 
-  <!-- Pricing -->
-   <section id="pricing" class="py-20">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <h2 class="text-3xl font-bold mb-12" data-aos="fade-up">Pricing Plans</h2>
-      <div class="grid md:grid-cols-2 gap-8">
-        <div class="bg-white p-8 rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 min-h-[480px]" data-aos="zoom-in">
-          <h3 class="text-xl font-bold mb-4">Basic</h3>
-          <p class="text-4xl font-bold mb-6">$0.00<span class="text-lg">/month</span></p>
-          <ul class="mb-6 space-y-2">
-            <li>✔️ Limited podcast</li>
-            <li>✔️ Limited challenges</li>
-            <li>✔️ Access to features</li>
-          </ul>
-          <a href="#" class="px-6 py-2 bg-[#00224F] text-white rounded-full hover:bg-indigo-700 transition">Choose</a>
+    </section>
+
+    <!-- Features: bento -->
+    <section id="features" class="max-w-6xl mx-auto px-5 py-24">
+      <h2 class="text-3xl md:text-5xl font-extrabold max-w-2xl leading-tight">Everything you need to decide, in one place.</h2>
+      <div class="mt-12 grid md:grid-cols-6 gap-5">
+        <article class="md:col-span-3 md:row-span-2 rounded-3xl bg-ink text-white p-9 flex flex-col justify-between min-h-[320px]">
+          <h3 class="text-3xl font-bold">Easy to understand</h3>
+          <p class="text-white/75 text-lg max-w-sm">Clear language and short lessons. No jargon, no prior knowledge needed. Anyone can use it.</p>
+        </article>
+        <article class="md:col-span-3 rounded-3xl bg-sun p-8">
+          <h3 class="text-2xl font-bold">Accessible</h3>
+          <p class="mt-3 max-w-sm">Use it on your phone or computer, wherever and whenever you have a free moment.</p>
+        </article>
+        <article class="md:col-span-3 rounded-3xl bg-white border border-ink/10 p-8">
+          <h3 class="text-2xl font-bold">Informative</h3>
+          <p class="mt-3 max-w-sm text-ink/80">All the information you need to prepare for your future is here: majors, skills, jobs and what each path really looks like.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- How it works: a real sequence -->
+    <section id="how" class="bg-white border-y border-ink/10">
+      <div class="max-w-6xl mx-auto px-5 py-24">
+        <h2 class="text-3xl md:text-5xl font-extrabold max-w-xl leading-tight">From "I don't know" to "I'm sure" in three steps.</h2>
+        <ol class="mt-14 grid md:grid-cols-3 gap-10">
+          <li>
+            <span class="font-display text-6xl font-extrabold text-grape">1</span>
+            <h3 class="text-xl font-bold mt-3">Explore</h3>
+            <p class="mt-2 text-ink/75">Browse majors and listen to podcasts from people who work in each field.</p>
+          </li>
+          <li>
+            <span class="font-display text-6xl font-extrabold text-grape">2</span>
+            <h3 class="text-xl font-bold mt-3">Test yourself</h3>
+            <p class="mt-2 text-ink/75">Take quick challenges that show which topics you enjoy and where you shine.</p>
+          </li>
+          <li>
+            <span class="font-display text-6xl font-extrabold text-grape">3</span>
+            <h3 class="text-xl font-bold mt-3">Decide</h3>
+            <p class="mt-2 text-ink/75">Compare your results and choose the major you want, with real reasons behind it.</p>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about" class="max-w-6xl mx-auto px-5 py-24 grid md:grid-cols-5 gap-12">
+      <h2 class="md:col-span-2 text-3xl md:text-5xl font-extrabold leading-tight">About noUva</h2>
+      <div class="md:col-span-3 divide-y divide-ink/15">
+        <div class="pb-8">
+          <h3 class="text-xl font-bold">Who we are</h3>
+          <p class="mt-2 text-ink/80 max-w-prose">A team dedicated to giving you the best experience as you plan your academic future.</p>
         </div>
-        <div class="bg-white p-8  rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 min-h-[480px] border-4 border-[#00224F]" data-aos="zoom-in" data-aos-delay="200">
-          <h3 class="text-xl font-bold mb-4">Premium</h3>
-          <p class="text-4xl font-bold mb-6">$0.99<span class="text-lg">/month</span></p>
-          <ul class="mb-6 space-y-2">
-            <li>✔️ Unlimited podcasts</li>
-            <li>✔️ Unlimited challenges</li>
-            <li>✔️ All features</li>
-          </ul>
-          <a href="#" class="px-6 py-2 bg-[#00224F] text-white rounded-full hover:bg-indigo-700 transition">Choose</a>
+        <div class="py-8">
+          <h3 class="text-xl font-bold">What we do</h3>
+          <p class="mt-2 text-ink/80 max-w-prose">We simplify the choice. We help you decide and prepare, so you are sure about the major you want.</p>
+        </div>
+        <div class="pt-8">
+          <h3 class="text-xl font-bold">Why choose us</h3>
+          <p class="mt-2 text-ink/80 max-w-prose">It is the one platform where you can explore and discover everything you will need for your future.</p>
         </div>
       </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="bg-white border-t border-ink/10">
+      <div class="max-w-4xl mx-auto px-5 py-24">
+        <h2 class="text-3xl md:text-5xl font-extrabold text-center">Simple pricing</h2>
+        <p class="text-center mt-3 text-ink/70">Start free. Upgrade when you want it all.</p>
+        <div class="mt-12 grid md:grid-cols-2 gap-6 items-stretch">
+          <div class="rounded-3xl border border-ink/15 p-9 flex flex-col">
+            <h3 class="text-xl font-bold">Basic</h3>
+            <p class="mt-4 font-display text-5xl font-extrabold">$0.00<span class="text-base font-medium text-ink/60"> / month</span></p>
+            <ul class="mt-7 space-y-3 flex-1">
+              <li class="flex gap-3"><span class="text-grape font-bold" aria-hidden="true">&#10003;</span>Limited podcasts</li>
+              <li class="flex gap-3"><span class="text-grape font-bold" aria-hidden="true">&#10003;</span>Limited challenges</li>
+              <li class="flex gap-3"><span class="text-grape font-bold" aria-hidden="true">&#10003;</span>Access to core features</li>
+            </ul>
+            <a href="/login" class="mt-9 text-center rounded-full border-2 border-ink font-bold py-3 hover:bg-ink hover:text-white transition-colors">Choose Basic</a>
+          </div>
+          <div class="rounded-3xl bg-ink text-white p-9 flex flex-col relative md:-my-3 shadow-2xl shadow-ink/30">
+            <span class="absolute -top-3 right-8 rounded-full bg-sun text-ink text-xs font-bold px-3 py-1">Best value</span>
+            <h3 class="text-xl font-bold">Premium</h3>
+            <p class="mt-4 font-display text-5xl font-extrabold">$0.99<span class="text-base font-medium text-white/60"> / month</span></p>
+            <ul class="mt-7 space-y-3 flex-1">
+              <li class="flex gap-3"><span class="text-sun font-bold" aria-hidden="true">&#10003;</span>Unlimited podcasts</li>
+              <li class="flex gap-3"><span class="text-sun font-bold" aria-hidden="true">&#10003;</span>Unlimited challenges</li>
+              <li class="flex gap-3"><span class="text-sun font-bold" aria-hidden="true">&#10003;</span>All features</li>
+            </ul>
+            <a href="/login" class="mt-9 text-center rounded-full bg-sun text-ink font-bold py-3 hover:bg-white transition-colors">Choose Premium</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing call to action -->
+    <section class="hero-bg text-white text-center">
+      <div class="max-w-3xl mx-auto px-5 py-20">
+        <h2 class="text-3xl md:text-5xl font-extrabold leading-tight">The first step to your future starts here.</h2>
+        <a href="/login" class="inline-block mt-8 rounded-full bg-sun text-ink font-bold px-8 py-3.5 hover:bg-white transition-colors">Create free account</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-deep text-white/60 text-sm">
+    <div class="max-w-6xl mx-auto px-5 py-8 flex flex-col sm:flex-row justify-between gap-2">
+      <p class="font-display font-bold text-white">noUva</p>
+      <p>&copy; 2025 noUva. All rights reserved.</p>
     </div>
-  </section>
- 
-  <!-- Footer -->
-  <footer class="bg-white py-6 text-center text-gray-500">
-    <p>© 2025 noUva. All rights reserved.</p>
   </footer>
- 
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init();
-  </script>
+
 </body>
 </html>
