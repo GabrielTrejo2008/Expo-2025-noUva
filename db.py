@@ -1,13 +1,14 @@
 import mysql.connector
- 
+
 def get_db_connection():
     return mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "fercho1232/Sh01@2024",
-        database = "nouva",
+        host="127.0.0.1",
+        user="root",
+        password="",
+        database="nouva",
         port=3306,
-        ssl_disabled=True 
+        ssl_disabled=True,
+        auth_plugin="caching_sha2_password",
+        get_server_public_key=True
     )
 
-#Ending

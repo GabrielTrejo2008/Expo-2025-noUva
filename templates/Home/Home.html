@@ -1,107 +1,337 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <title>Home</title>
+  <meta name="theme-color" content="#00224F">
+  <title>noUva | Elige tu carrera</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: { ink: '#00224F', deep: '#001737', grape: '#7C4DFF', sun: '#FFD54A', paper: '#F5F6FB' },
+        fontFamily: { display: ['"Bricolage Grotesque"', 'sans-serif'], body: ['"DM Sans"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] }
+      } }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; scroll-padding-top: 88px; }
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, .font-display { font-family: 'Bricolage Grotesque', sans-serif; letter-spacing: -0.02em; }
+    :focus-visible { outline: 3px solid #7C4DFF; outline-offset: 2px; }
+    .on-dark :focus-visible, header :focus-visible { outline-color: #FFD54A; }
+
+    .side-bg {
+      background:
+        radial-gradient(40rem 24rem at 90% 0%, rgba(124,77,255,.5), transparent 60%),
+        radial-gradient(30rem 20rem at 0% 100%, rgba(255,213,74,.14), transparent 60%),
+        #00224F;
+    }
+
+    /* Pestañas estilo "pill" como el login */
+    .tab-button { color: #00224F99; }
+    .tab-button[aria-selected="true"] { background: #fff; color: #00224F; box-shadow: 0 1px 4px rgba(0,34,79,.15); }
+    .tab-panel[hidden] { display: none; }
+    .tab-panel { animation: fade .25s ease-out; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .uni-card { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; border: 1.5px solid transparent; }
+    .uni-card:hover { transform: translateY(-4px); border-color: #7C4DFF; box-shadow: 0 0 0 1px #7C4DFF, 0 18px 40px rgba(124,77,255,.25); }
+    .uni-card img { transition: transform .5s ease; }
+    .uni-card:hover img { transform: scale(1.04); }
+
+    .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #FFD54A; }
+
+    /* Útiles escolares flotantes */
+    .floaters { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .float { position: absolute; color: #fff; opacity: .14; animation: drift 14s ease-in-out infinite; }
+    .float:nth-of-type(even) { animation-name: sway; color: #FFD54A; opacity: .16; }
+    @keyframes drift { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-24px) rotate(calc(var(--r) + 14deg)); } }
+    @keyframes sway { 0%, 100% { transform: translateX(0) rotate(var(--r)); } 50% { transform: translateX(18px) translateY(-14px) rotate(calc(var(--r) - 12deg)); } }
+
+
+    /* Capa tecnológica */
+    header::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+      background: linear-gradient(90deg, transparent, #7C4DFF, #FFD54A, transparent); opacity: .8; }
+    .grid-bg::before, .grid-light::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+      mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%); }
+    .grid-bg::before { background-image: linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px); }
+    .grid-light::before { background-image: linear-gradient(rgba(0,34,79,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,34,79,.06) 1px, transparent 1px); }
+    .finder-window { box-shadow: 0 0 0 1px rgba(255,255,255,.25), 0 0 70px rgba(124,77,255,.5), 0 30px 60px rgba(0,0,0,.35); }
+    .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+    .chip { font-family: 'JetBrains Mono', monospace; font-size: .8rem; font-weight: 500; background: #F5F6FB;
+      border: 1px solid rgba(0,34,79,.1); border-radius: 999px; padding: 6px 13px; }
+    .chip::before { content: "#"; color: #7C4DFF; margin-right: 2px; }
+    .caret { display: inline-block; width: .55em; height: 1em; margin-left: 3px; vertical-align: -2px; background: #FFD54A; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    a.bg-sun { transition: background-color .2s, box-shadow .2s; }
+    a.bg-sun:hover { box-shadow: 0 0 28px rgba(255,213,74,.55); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .caret { animation: none; }
+      html { scroll-behavior: auto; }
+      .tab-panel { animation: none; }
+      .float { animation: none; transform: rotate(var(--r)); }
+      .uni-card, .uni-card img { transition: none; }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="bg-white text-ink antialiased">
 
-  <!-- Navbar -->
-<nav class="bg-[#00224F] text-white p-4">
-  <div class="container mx-auto flex items-center justify-between">
-    <!-- Logo -->
-    <img src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}" 
-         alt="Logo" class="h-16 w-40">
-    <div class="flex items-center space-x-6">
-      <a href="{{ url_for('home_page') }}" class="hover:underline">Home</a>
-      <a href="{{ url_for('universities_page') }}" class="hover:underline">Universities</a>
-      <a href="{{ url_for('podcasts_page') }}" class="hover:underline">Podcasts</a>
-      <a href="{{ url_for('challenges_page') }}" class="hover:underline">Challenges</a>
-      <a href="{{ url_for('subcription_page') }}" class="hover:underline">Get premium</a>
-
-      <!-- Foto de perfil -->
-      <a href="{{ url_for('perfil_page') }}">
-        <img id="navbar-pic"
-             src="{{ url_for('static', filename='default.png') }}" 
-             alt="Profile"
-             class="h-10 w-10 rounded-full border-2 border-white object-cover object-center hover:scale-105 transition-transform duration-200">
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 bg-ink/95 backdrop-blur border-b border-white/10 text-white">
+    <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8" aria-label="Principal">
+      <a href="{{ url_for('home_page') }}" aria-label="noUva, inicio">
+        <img src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}" alt="noUva" class="h-12 w-32 object-contain">
       </a>
-    </div>
-  </div>
-</nav>
 
+      <button id="menu-toggle" type="button" aria-controls="nav-links" aria-expanded="false" aria-label="Abrir menú"
+              class="rounded-full border border-white/25 px-3.5 py-2 text-xl md:hidden">☰</button>
 
-  <main class="container mx-auto mt-10 ">
-
-    <section class="my-20">
-  <h2 class="font-bold text-3xl md:text-4xl text-center text-gray-800 mb-10">
-    Most Popular Majors
-  </h2>
-
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 px-6 md:px-20">
-    <div class="bg-white p-10 flex flex-col items-center justify-center rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 min-h-[480px]">
-      <img src="{{ url_for('static', filename='home/ComputerScince.png') }}" alt="Computer Science" class="w-42 h-72 mb-6">
-      <span class="font-bold text-gray-700 text-lg md:text-xl text-center">
-        Computer Science
-      </span>
-    </div>
-
-    <div class="bg-white p-10 flex flex-col items-center justify-center rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 min-h-[480px]">
-      <img src="{{ url_for('static', filename='home/Marketing.png') }}" alt="Marketing" class="w-42 h-76 mb-6">
-      <span class="font-bold text-gray-700 text-lg md:text-xl text-center">
-        Marketing
-      </span>
-    </div>
-
-    <div class="bg-white p-10 flex flex-col items-center justify-center rounded-2xl shadow-xl hover:shadow-2xl transition-shadow duration-300 min-h-[480px]">
-      <img src="{{ url_for('static', filename='home/Business.png') }}" alt="Business" class="w-42 h-72 mb-6">
-      <span class="font-bold text-gray-700 text-lg md:text-xl text-center">
-        Business
-      </span>
-    </div>
-  </div>
-</section>
-
-    <section class="my-16">
-      <h2 class="font-bold text-3xl md:text-4xl text-center text-gray-800 mb-10">Featured Universities</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <a href="{{ url_for('donBosco_page') }}" class="bg-white p-6 flex flex-col items-center justify-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <img src="{{ url_for('static', filename='home/facebook.jpg') }}" alt="Universidad Don Bosco" class="w-62 h-52 object-cover rounded-md mb-4">
-          <p class="font-bold text-gray-700">Universidad Don Bosco</p>
-        </a>
-        <a href="{{ url_for('universities_page') }}" class="bg-white p-6 flex flex-col items-center justify-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <img src="{{ url_for('static', filename='home/R.jpeg') }}" alt="Universidad De El Salvador" class="w-62 h-52 object-cover rounded-md mb-4">
-          <p class="font-bold text-gray-700">Universidad Tecnologica</p>
-        </a>
-        <a href="{{ url_for('universities_page') }}" class="bg-white p-6 flex flex-col items-center justify-center rounded-xl shadow-lg hover:shadow-2xl transition-shadow duration-300">
-          <img src="{{ url_for('static', filename='home/USAM-CAMPUS.jpg') }}" alt="Universidad Gerardo Barrios" class="w-62 h-52 object-cover rounded-md mb-4">
-          <p class="font-bold text-gray-700">Universidad Salvadorena Alberto Masferrer</p>
+      <div id="nav-links"
+           class="absolute left-0 right-0 top-full hidden flex-col gap-5 bg-ink p-6 border-b border-white/10 md:static md:flex md:flex-row md:items-center md:gap-7 md:border-0 md:bg-transparent md:p-0">
+        <a href="{{ url_for('home_page') }}" class="text-sm font-bold text-sun">Home</a>
+        <a href="{{ url_for('universities_page') }}" class="text-sm font-bold text-white/80 hover:text-white transition-colors">Universities</a>
+        <a href="{{ url_for('podcasts_page') }}" class="text-sm font-bold text-white/80 hover:text-white transition-colors">Podcasts</a>
+        <a href="{{ url_for('challenges_page') }}" class="text-sm font-bold text-white/80 hover:text-white transition-colors">Challenges</a>
+        <a href="{{ url_for('subcription_page') }}"
+           class="rounded-full bg-sun px-5 py-2 text-center text-sm font-bold text-ink hover:bg-white transition-colors">Get premium</a>
+        <a href="{{ url_for('perfil_page') }}" class="flex w-fit items-center gap-3" aria-label="Mi perfil">
+          <img id="navbar-pic" src="{{ url_for('static', filename='default.png') }}" alt="Foto de perfil" class="avatar">
+          <span class="text-sm font-bold text-white/80 md:hidden">Mi perfil</span>
         </a>
       </div>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="side-bg grid-bg on-dark relative overflow-hidden text-white">
+      <div class="floaters" aria-hidden="true">
+        <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+          <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h13v15H6a2 2 0 0 0-2 2zm0 0a2 2 0 0 0 2 2h13v-3M9 7h6"/></symbol>
+          <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1-4L16 5a2 2 0 0 1 3 3L8 19zM14 7l3 3"/></symbol>
+          <symbol id="i-notebook" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v18M12 8h4M12 12h4M3 7h2M3 12h2M3 17h2"/></symbol>
+          <symbol id="i-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5zM6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5M22 9v6"/></symbol>
+          <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+        <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></symbol>
+          <symbol id="i-chip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><path d="M9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+        </defs></svg>
+        <svg class="float" style="top:6%;left:3%;width:62px;height:62px;--r:-12deg;animation-duration:16s"><use href="#i-book"/></svg>
+        <svg class="float" style="top:8%;right:4%;width:64px;height:64px;--r:-8deg;animation-delay:-2s;animation-duration:15s"><use href="#i-cap"/></svg>
+        <svg class="float" style="top:46%;left:40%;width:50px;height:50px;--r:22deg;animation-delay:-5s;animation-duration:13s"><use href="#i-pencil"/></svg>
+        <svg class="float" style="top:84%;right:6%;width:54px;height:54px;--r:10deg;animation-delay:-7s;animation-duration:18s"><use href="#i-notebook"/></svg>
+        <svg class="float" style="top:30%;left:46%;width:56px;height:56px;--r:8deg;animation-delay:-4s;animation-duration:15s"><use href="#i-code"/></svg>
+        <svg class="float" style="top:66%;left:50%;width:52px;height:52px;--r:-10deg;animation-delay:-8s;animation-duration:17s"><use href="#i-chip"/></svg>
+        <svg class="float" style="top:80%;left:5%;width:46px;height:46px;--r:12deg;animation-delay:-3s;animation-duration:17s"><use href="#i-bulb"/></svg>
+      </div>
+
+      <div class="relative z-10 mx-auto grid max-w-7xl items-center gap-12 px-6 py-16 md:py-24 lg:grid-cols-[1fr_1.05fr] lg:px-8">
+
+        <div>
+          <h1 class="text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl">Elige qué estudiar con más claridad.</h1>
+          <p class="mt-6 max-w-md text-lg text-white/75">Conoce las áreas más buscadas, qué se estudia en cada una y qué universidades puedes explorar.</p>
+          <p class="mt-5 font-mono-tech text-sm font-medium text-sun" aria-hidden="true"><span class="text-white/50">&gt;</span> explorando <span id="typed">Computer Science</span><span class="caret"></span></p>
+          <div class="mt-9 flex flex-wrap gap-3">
+            <a href="{{ url_for('universities_page') }}" class="rounded-full bg-sun px-7 py-3.5 font-bold text-ink hover:bg-white transition-colors">Ver universidades</a>
+            <a href="#universities" class="rounded-full border border-white/30 px-7 py-3.5 font-bold text-white hover:border-white transition-colors">Destacadas</a>
+          </div>
+        </div>
+
+        <!-- Selector de áreas -->
+        <div class="finder-window overflow-hidden rounded-3xl bg-white text-ink" id="finder">
+          <div class="flex items-center gap-2 bg-deep px-5 py-3" aria-hidden="true">
+            <span class="h-3 w-3 rounded-full bg-white/25"></span><span class="h-3 w-3 rounded-full bg-sun"></span><span class="h-3 w-3 rounded-full bg-grape"></span>
+            <span class="ml-3 font-mono-tech text-xs text-white/60">nouva://explorar/areas</span>
+          </div>
+          <div class="p-5 sm:p-8">
+          <div class="flex rounded-full bg-paper p-1" role="tablist" aria-label="Áreas de estudio">
+            <button id="tab-cs" role="tab" aria-selected="true"  aria-controls="panel-cs" class="tab-button flex-1 rounded-full px-2 py-2.5 text-sm font-bold transition-all duration-200 sm:text-base">Computer Science</button>
+            <button id="tab-mk" role="tab" aria-selected="false" aria-controls="panel-mk" tabindex="-1" class="tab-button flex-1 rounded-full px-2 py-2.5 text-sm font-bold transition-all duration-200 sm:text-base">Marketing</button>
+            <button id="tab-bz" role="tab" aria-selected="false" aria-controls="panel-bz" tabindex="-1" class="tab-button flex-1 rounded-full px-2 py-2.5 text-sm font-bold transition-all duration-200 sm:text-base">Business</button>
+          </div>
+
+          <div class="tab-panel mt-6" role="tabpanel" id="panel-cs" aria-labelledby="tab-cs">
+            <div class="flex h-52 items-center justify-center rounded-2xl bg-paper">
+              <img src="{{ url_for('static', filename='home/ComputerScince.png') }}" alt="Computer Science" class="h-full w-full object-contain p-4">
+            </div>
+            <h2 class="mt-5 text-2xl font-extrabold">Computer Science</h2>
+            <p class="mt-2 text-ink/70">Aprendes a diseñar y construir software, manejar datos y resolver problemas con lógica.</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span class="chip">Programación</span>
+              <span class="chip">Bases de datos</span>
+              <span class="chip">Redes</span>
+              <span class="chip">Inteligencia artificial</span>
+            </div>
+            <a href="{{ url_for('universities_page') }}" class="mt-6 inline-block rounded-full bg-ink px-6 py-3 font-bold text-white hover:bg-grape transition-colors">Ver dónde estudiarla</a>
+          </div>
+
+          <div class="tab-panel mt-6" role="tabpanel" id="panel-mk" aria-labelledby="tab-mk" hidden>
+            <div class="flex h-52 items-center justify-center rounded-2xl bg-paper">
+              <img src="{{ url_for('static', filename='home/Marketing.png') }}" alt="Marketing" class="h-full w-full object-contain p-4">
+            </div>
+            <h2 class="mt-5 text-2xl font-extrabold">Marketing</h2>
+            <p class="mt-2 text-ink/70">Aprendes a entender al público, construir marcas y comunicar ideas en medios digitales.</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span class="chip">Investigación de mercado</span>
+              <span class="chip">Comunicación digital</span>
+              <span class="chip">Marca</span>
+              <span class="chip">Analítica</span>
+            </div>
+            <a href="{{ url_for('universities_page') }}" class="mt-6 inline-block rounded-full bg-ink px-6 py-3 font-bold text-white hover:bg-grape transition-colors">Ver dónde estudiarla</a>
+          </div>
+
+          <div class="tab-panel mt-6" role="tabpanel" id="panel-bz" aria-labelledby="tab-bz" hidden>
+            <div class="flex h-52 items-center justify-center rounded-2xl bg-paper">
+              <img src="{{ url_for('static', filename='home/Business.png') }}" alt="Business" class="h-full w-full object-contain p-4">
+            </div>
+            <h2 class="mt-5 text-2xl font-extrabold">Business</h2>
+            <p class="mt-2 text-ink/70">Aprendes a dirigir equipos, administrar recursos y llevar proyectos y empresas adelante.</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              <span class="chip">Finanzas</span>
+              <span class="chip">Emprendimiento</span>
+              <span class="chip">Liderazgo</span>
+              <span class="chip">Operaciones</span>
+            </div>
+            <a href="{{ url_for('universities_page') }}" class="mt-6 inline-block rounded-full bg-ink px-6 py-3 font-bold text-white hover:bg-grape transition-colors">Ver dónde estudiarla</a>
+          </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNIVERSIDADES -->
+    <section id="universities" class="grid-light relative bg-paper py-20">
+      <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold sm:text-4xl">Universidades destacadas</h2>
+        <p class="mt-3 max-w-xl text-ink/70">Empieza por estas instituciones y compara opciones.</p>
+
+        <div class="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <a href="{{ url_for('donBosco_page') }}" class="uni-card block overflow-hidden rounded-2xl bg-white">
+            <div class="overflow-hidden">
+              <img src="{{ url_for('static', filename='home/facebook.jpg') }}" alt="Universidad Don Bosco" loading="lazy" class="h-56 w-full object-cover">
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-extrabold">Universidad Don Bosco</h3>
+              <p class="mt-2 text-sm text-ink/70">Conoce sus carreras y su campus.</p>
+            </div>
+          </a>
+
+          <a href="{{ url_for('universities_page') }}" class="uni-card block overflow-hidden rounded-2xl bg-white">
+            <div class="overflow-hidden">
+              <img src="{{ url_for('static', filename='home/R.jpeg') }}" alt="Universidad Tecnológica" loading="lazy" class="h-56 w-full object-cover">
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-extrabold">Universidad Tecnológica</h3>
+              <p class="mt-2 text-sm text-ink/70">Revisa su oferta académica.</p>
+            </div>
+          </a>
+
+          <a href="{{ url_for('universities_page') }}" class="uni-card block overflow-hidden rounded-2xl bg-white">
+            <div class="overflow-hidden">
+              <img src="{{ url_for('static', filename='home/USAM-CAMPUS.jpg') }}" alt="Universidad Salvadoreña Alberto Masferrer" loading="lazy" class="h-56 w-full object-cover">
+            </div>
+            <div class="p-6">
+              <h3 class="text-lg font-extrabold">Universidad Salvadoreña Alberto Masferrer</h3>
+              <p class="mt-2 text-sm text-ink/70">Explora sus programas.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- LLAMADA FINAL -->
+    <section class="side-bg grid-bg on-dark relative text-white">
+      <div class="relative mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-6 py-16 sm:flex-row sm:items-center lg:px-8">
+        <div>
+          <h2 class="text-2xl font-extrabold sm:text-3xl">¿Aún no sabes qué estudiar?</h2>
+          <p class="mt-2 text-white/75">Escucha los podcasts y completa los retos para descubrir qué te gusta.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <a href="{{ url_for('podcasts_page') }}" class="rounded-full bg-sun px-7 py-3.5 font-bold text-ink hover:bg-white transition-colors">Escuchar podcasts</a>
+          <a href="{{ url_for('challenges_page') }}" class="rounded-full border border-white/30 px-7 py-3.5 font-bold text-white hover:border-white transition-colors">Ver retos</a>
+        </div>
+      </div>
+    </section>
 
   </main>
 
+  <footer class="bg-deep text-white">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 py-8 sm:flex-row lg:px-8">
+      <img src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}" alt="noUva" class="h-10 w-24 object-contain">
+      <p class="text-sm text-white/50">&copy; 2025 noUva</p>
+    </div>
+  </footer>
+
   <script>
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const res = await fetch("http://127.0.0.1:5000/profile", {
-            credentials: "include" 
-        });
+    // Menú móvil
+    const toggle = document.getElementById('menu-toggle');
+    const links = document.getElementById('nav-links');
+    toggle.addEventListener('click', () => {
+      const open = links.classList.toggle('hidden') === false;
+      links.classList.toggle('flex', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      toggle.textContent = open ? '✕' : '☰';
+    });
+
+    // Selector de áreas (pestañas accesibles, también con flechas del teclado)
+    const tabs = Array.from(document.querySelectorAll('#finder [role="tab"]'));
+    const typedEl = document.getElementById('typed');
+    let typeTimer;
+    function typeText(text) {
+      clearInterval(typeTimer);
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { typedEl.textContent = text; return; }
+      let i = 0;
+      typedEl.textContent = '';
+      typeTimer = setInterval(() => {
+        typedEl.textContent = text.slice(0, ++i);
+        if (i >= text.length) clearInterval(typeTimer);
+      }, 45);
+    }
+    function selectTab(tab) {
+      typeText(tab.textContent.trim());
+      tabs.forEach(t => {
+        const active = t === tab;
+        t.setAttribute('aria-selected', String(active));
+        t.tabIndex = active ? 0 : -1;
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !active;
+      });
+      tab.focus();
+    }
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => selectTab(tab));
+      tab.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') selectTab(tabs[(i + 1) % tabs.length]);
+        if (e.key === 'ArrowLeft') selectTab(tabs[(i - 1 + tabs.length) % tabs.length]);
+      });
+    });
+
+    // Foto de perfil desde Flask
+    document.addEventListener('DOMContentLoaded', async () => {
+      const pic = document.getElementById('navbar-pic');
+      try {
+        const res = await fetch('/profile', { credentials: 'include' });
+        if (!res.ok) return;
         const data = await res.json();
         if (data && !data.error && data.foto_url) {
-            document.getElementById("navbar-pic").src = "/static/" + data.foto_url;
+          const p = data.foto_url;
+          pic.src = /^https?:\/\//i.test(p) ? p
+                  : p.startsWith('/static/') ? p
+                  : '/static/' + p.replace(/^\/+/, '');
+          pic.onerror = () => { pic.src = "{{ url_for('static', filename='default.png') }}"; };
         }
-    } catch (err) {
-        console.error("Error cargando foto:", err);
-    }
-});
-</script>
-
-  <footer class="bg-[#00224F] text-white text-center py-6 mt-10">
-    <p class="text-sm">&copy; 2025 NoUva. All rights reserved.</p>
-  </footer>
+      } catch (err) {
+        console.error('Error cargando la foto de perfil:', err);
+      }
+    });
+  </script>
 
 </body>
 </html>
