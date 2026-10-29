@@ -104,6 +104,8 @@ def challenges_page():
 def challengeFuncional_page():
     user_data = get_user_data()
     return render_template('challenge-funcional/funcional-challenge.html', user_data=user_data)
+@app.route('/computer-science')
+
 
 @app.route('/donBosco')
 def donBosco_page():

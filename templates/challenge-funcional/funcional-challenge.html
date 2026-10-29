@@ -1,201 +1,1487 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Challenge</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOUVA | Code Challenges</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.27.7/full/pyodide.js"></script>
+
+    <style>
+        :root {
+            --navy: #00224F;
+            --blue: #176BCE;
+            --background: #F3F6FB;
+            --green: #16A34A;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: #172033;
+            font-family: Inter, system-ui, -apple-system, sans-serif;
+        }
+
+        .topbar {
+            background: var(--navy);
+            color: white;
+            padding: 12px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .topbar img.logo {
+            width: 145px;
+            height: 58px;
+            object-fit: contain;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 22px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover { text-decoration: underline; }
+
+        .nav-links .profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid white;
+            object-fit: cover;
+        }
+
+        .container-main {
+            max-width: 1450px;
+            margin: auto;
+            padding: 30px 22px 60px;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #00224F, #104A91);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+        }
+
+        .hero h1 {
+            font-size: clamp(26px, 4vw, 38px);
+            font-weight: 800;
+            margin: 0 0 10px;
+        }
+
+        .hero p {
+            color: #D8E8FF;
+            max-width: 760px;
+            line-height: 1.7;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-top: 25px;
+        }
+
+        .stat {
+            background: rgba(255,255,255,.1);
+            border: 1px solid rgba(255,255,255,.15);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .stat-label {
+            color: #D8E8FF;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 25px;
+            font-weight: 800;
+        }
+
+        .progress-track {
+            height: 9px;
+            background: #DCE5F0;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0;
+            background: #27C281;
+            transition: width .3s;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 310px minmax(0, 1fr);
+            gap: 22px;
+            align-items: start;
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #E0E7F0;
+            border-radius: 16px;
+            box-shadow: 0 4px 18px rgba(15, 35, 65, .04);
+        }
+
+        .mission-sidebar {
+            padding: 20px;
+            position: sticky;
+            top: 15px;
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin: 0 0 15px;
+        }
+
+        .world-heading {
+            margin: 20px 0 9px;
+            color: #667085;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .mission-button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            text-align: left;
+            padding: 12px;
+            margin-bottom: 7px;
+            background: white;
+            border: 1px solid #E6EBF2;
+            border-radius: 11px;
+            cursor: pointer;
+            color: #243047;
+        }
+
+        .mission-button:hover:not(:disabled) {
+            border-color: #8AB9F4;
+            background: #F5F9FF;
+        }
+
+        .mission-button.active {
+            background: #EAF3FF;
+            border-color: #176BCE;
+        }
+
+        .mission-button:disabled {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+
+        .mission-number {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: #EAF0F8;
+            flex-shrink: 0;
+            font-weight: 800;
+        }
+
+        .mission-button.active .mission-number {
+            background: var(--navy);
+            color: white;
+        }
+
+        .mission-button.completed .mission-number {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+
+        .mission-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .mission-meta {
+            display: block;
+            margin-top: 4px;
+            color: #718096;
+            font-size: 11px;
+        }
+
+        .workspace { overflow: hidden; }
+
+        .workspace-header {
+            padding: 23px 25px;
+            border-bottom: 1px solid #E7ECF3;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 30px;
+            background: #EAF3FF;
+            color: #1458A6;
+            padding: 6px 10px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .workspace-header h2 {
+            font-size: 25px;
+            font-weight: 850;
+            margin: 12px 0 8px;
+        }
+
+        .workspace-header p {
+            color: #596579;
+            line-height: 1.7;
+            margin: 0;
+        }
+
+        .briefing {
+            margin: 20px 25px;
+            padding: 17px;
+            background: #F4F8FF;
+            border-left: 4px solid #176BCE;
+            border-radius: 8px;
+        }
+
+        .briefing h3 {
+            font-weight: 800;
+            margin: 0 0 7px;
+            font-size: 14px;
+        }
+
+        .briefing p {
+            font-size: 13px;
+            line-height: 1.7;
+            margin: 0;
+            color: #43516A;
+        }
+
+        .requirements {
+            margin: 0 25px 20px;
+            padding-left: 20px;
+            font-size: 13px;
+            line-height: 1.8;
+            color: #465369;
+        }
+
+        .editor-top {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center;
+            background: #182335;
+            color: #EAF1FC;
+            padding: 13px 17px;
+            font-size: 12px;
+        }
+
+        .editor-top span:last-child { color: #AAB9D0; }
+
+        #codeEditor {
+            display: block;
+            width: 100%;
+            min-height: 310px;
+            resize: vertical;
+            border: none;
+            outline: none;
+            background: #101927;
+            color: #D8E7FF;
+            padding: 22px;
+            font: 13px/1.8 Consolas, Monaco, monospace;
+            tab-size: 4;
+        }
+
+        .editor-actions {
+            background: #101927;
+            border-top: 1px solid #2A374B;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding: 15px 18px;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 16px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 12px;
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: wait;
+        }
+
+        .btn-run { background: #27C281; color: #052E1B; }
+        .btn-submit { background: #2878DE; color: white; }
+        .btn-hint { background: #E8EDF5; color: #26344A; }
+        .btn-reset { background: transparent; border: 1px solid #62718A; color: white; }
+
+        .console {
+            background: #0B1220;
+            color: #CBD5E1;
+            padding: 18px 22px;
+            min-height: 100px;
+            font: 12px/1.8 Consolas, Monaco, monospace;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .console-title {
+            color: #91A2BA;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .feedback {
+            margin: 18px 22px;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.7;
+            display: none;
+        }
+
+        .feedback.success {
+            display: block;
+            background: #DCFCE7;
+            color: #166534;
+        }
+
+        .feedback.error {
+            display: block;
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .feedback.info {
+            display: block;
+            background: #EAF3FF;
+            color: #174A85;
+        }
+
+        .workspace-footer {
+            padding: 0 22px 22px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .small-note {
+            color: #718096;
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .btn-next {
+            background: var(--navy);
+            color: white;
+        }
+
+        .btn-next:disabled { background: #A8B4C5; }
+
+        .tip-box {
+            display: none;
+            margin: 0 22px 18px;
+            padding: 14px;
+            background: #FFF7DB;
+            border: 1px solid #F4D778;
+            color: #744B00;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 1000px) {
+            .layout { grid-template-columns: 1fr; }
+            .mission-sidebar { position: static; }
+            .mission-list {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 7px;
+            }
+            .mission-button { margin: 0; }
+        }
+
+        @media (max-width: 650px) {
+            .topbar { align-items: flex-start; flex-direction: column; }
+            .nav-links { gap: 12px; }
+            .container-main { padding: 18px 12px 40px; }
+            .hero { padding: 22px; }
+            .stats { grid-template-columns: 1fr; }
+            .mission-list { grid-template-columns: 1fr; }
+            .workspace-header { padding: 20px; }
+            .briefing { margin: 17px; }
+            .requirements { margin: 0 20px 18px; }
+            #codeEditor { min-height: 270px; padding: 15px; }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
 
-<nav class="bg-[#00224F] text-white p-4">
-  <div class="container mx-auto flex items-center justify-between">
-    <!-- Logo -->
-    <img src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}" 
-         alt="Logo" class="h-16 w-40">
-    <div class="flex items-center space-x-6">
-      <a href="{{ url_for('home_page') }}" class="hover:underline">Home</a>
-      <a href="{{ url_for('universities_page') }}" class="hover:underline">Universities</a>
-      <a href="{{ url_for('podcasts_page') }}" class="hover:underline">Podcasts</a>
-      <a href="{{ url_for('challenges_page') }}" class="hover:underline">Challenges</a>
-      <a href="{{ url_for('subcription_page') }}" class="hover:underline">Get premium</a>
+<body>
 
-      <!-- Foto de perfil -->
-      <a href="{{ url_for('perfil_page') }}">
-        <img id="navbar-pic"
-             src="{{ url_for('static', filename='default.png') }}" 
-             alt="Profile"
-             class="h-10 w-10 rounded-full border-2 border-white object-cover object-center hover:scale-105 transition-transform duration-200">
-      </a>
+<nav class="topbar">
+    <a href="{{ url_for('home_page') }}">
+        <img
+            class="logo"
+            src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}"
+            alt="NOUVA"
+        >
+    </a>
+
+    <div class="nav-links">
+        <a href="{{ url_for('home_page') }}">Home</a>
+        <a href="{{ url_for('universities_page') }}">Universities</a>
+        <a href="{{ url_for('podcasts_page') }}">Podcasts</a>
+        <a href="{{ url_for('challenges_page') }}">Challenges</a>
+        <a href="{{ url_for('subcription_page') }}">Get premium</a>
+
+        <a href="{{ url_for('perfil_page') }}">
+            <img
+                id="navbar-pic"
+                class="profile"
+                src="{{ url_for('static', filename='default.png') }}"
+                alt="Profile"
+            >
+        </a>
     </div>
-  </div>
 </nav>
 
-  <main class="flex-grow flex items-center justify-center py-10">
-    <div class="w-full max-w-3xl bg-white shadow-xl rounded-2xl p-6 text-center">
-      
-      <img id="pattern" src="{{ url_for('static', filename='challenges-funcional/PatrC1.jpg') }}" 
-           alt="Patrón incompleto" 
-           class="mx-auto mb-6 border rounded-lg shadow w-72 h-72 object-contain"> 
-     
-      <div id="options-container" class="grid grid-cols-2 gap-4 mb-6"></div>
+<main class="container-main">
 
-      <p id="feedback" class="text-lg font-semibold"></p>
+    <section class="hero">
+        <div class="text-xs font-bold uppercase tracking-widest mb-3">
+            NOUVA CAREER SIMULATOR
+        </div>
 
-      <button id="nextBtn" 
-              class="hidden mt-6 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-800 transition">
-        Next ➡️
-      </button>
+        <h1>Code Challenges</h1>
 
-      <div class="mt-6 hidden" id="returnBtnContainer">
-        <a href="{{ url_for('challenges_page') }}" 
-           class="px-6 py-2 bg-[#D9D9D9]  rounded-lg hover:bg-[#D9D9D9] transition">
-           🔙 Go back to challenges
-        </a>
-      </div>
+        <p>
+            Your career starts here. Solve real-world programming tasks,
+            debug applications and complete the missions your fictional
+            team leader assigns you. Learn by writing code, not just
+            answering questions.
+        </p>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-label">YOUR EXPERIENCE</div>
+                <div class="stat-value"><span id="xpValue">0</span> XP</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">MISSIONS COMPLETED</div>
+                <div class="stat-value">
+                    <span id="completedValue">0</span>/15
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">CURRENT RANK</div>
+                <div class="stat-value" id="rankValue">Trainee</div>
+            </div>
+        </div>
+
+        <div class="progress-track">
+            <div id="progressFill" class="progress-fill"></div>
+        </div>
+
+        <div id="progressText" class="text-xs mt-2 text-blue-100">
+            0% completed
+        </div>
+    </section>
+
+    <div class="layout">
+
+        <aside class="panel mission-sidebar">
+            <h2 class="section-title">Mission board</h2>
+            <p class="text-xs text-gray-500 leading-6">
+                Complete each mission to unlock the next one.
+                Your career progression starts with the basics.
+            </p>
+
+            <div id="missionList"></div>
+        </aside>
+
+        <section class="panel workspace">
+
+            <header class="workspace-header">
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span id="levelBadge" class="badge">LEVEL 1</span>
+                    <span id="difficultyBadge" class="badge">BEGINNER</span>
+                    <span id="xpBadge" class="badge">+100 XP</span>
+                </div>
+
+                <h2 id="missionTitle">Loading mission...</h2>
+
+                <p id="missionDescription"></p>
+            </header>
+
+            <div class="briefing">
+                <h3>📨 Message from your team leader</h3>
+                <p id="bossMessage"></p>
+            </div>
+
+            <ul id="requirements" class="requirements"></ul>
+
+            <div class="editor-top">
+                <span>● &nbsp; main.py</span>
+                <span>Python 3 · Browser execution</span>
+            </div>
+
+            <textarea
+                id="codeEditor"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+                aria-label="Python code editor"
+            ></textarea>
+
+            <div class="editor-actions">
+                <button id="runButton" class="btn btn-run" onclick="runCode()">
+                    ▶ Run code
+                </button>
+
+                <button id="submitButton" class="btn btn-submit" onclick="checkSolution()">
+                    ✓ Submit solution
+                </button>
+
+                <button class="btn btn-hint" onclick="showHint()">
+                    💡 Request hint
+                </button>
+
+                <button class="btn btn-reset" onclick="resetCode()">
+                    Reset code
+                </button>
+            </div>
+
+            <div class="console">
+                <div class="console-title">Execution output</div>
+                <div id="consoleOutput">Your program output will appear here.</div>
+            </div>
+
+            <div id="feedback" class="feedback" role="status" aria-live="polite"></div>
+            <div id="hintBox" class="tip-box"></div>
+
+            <footer class="workspace-footer">
+                <div class="small-note">
+                    Pass all mission tests to earn XP and unlock the next task.
+                    <br>
+                    Do not include test-specific hardcoded answers in your solution.
+                </div>
+
+                <button
+                    id="nextButton"
+                    class="btn btn-next"
+                    onclick="nextMission()"
+                    disabled
+                >
+                    Next mission →
+                </button>
+            </footer>
+
+        </section>
     </div>
-  </main>
+</main>
 
-  <script>
-    const challenges = [
-      {
-        pattern: "{{ url_for('static', filename='challenges-funcional/PatrC1.jpg') }}",
-        options: [
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion2.jpg') }}", correct: true},  
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion1.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion3.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion4.jpg') }}", correct: false}
-        ]
-      },
-      {
-        pattern: "{{ url_for('static', filename='challenges-funcional/PatrC2.jpg') }}", 
-        options: [
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion5.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion6.jpg') }}", correct: true},   
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion7.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion8.jpg') }}", correct: false},
-        ]
-      },
-      {
-        pattern: "{{ url_for('static', filename='challenges-funcional/PatrC3.jpg') }}", 
-        options: [
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion9.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion11.jpg') }}", correct: true},   
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion10.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion12.jpg') }}", correct: false},
-        ]
-      },
-      {
-        pattern: "{{ url_for('static', filename='challenges-funcional/PatrC4.jpg') }}", 
-        options: [
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion13.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion14.jpg') }}", correct: true},   
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion15.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion16.jpg') }}", correct: false},
-        ]
-      },
-      {
-        pattern: "{{ url_for('static', filename='challenges-funcional/PatrC5.jpg') }}", 
-        options: [
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion17.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion18.jpg') }}", correct: true},   
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion19.jpg') }}", correct: false},
-          {img: "{{ url_for('static', filename='challenges-funcional/Opcion20.jpg') }}", correct: false},
-        ]
-      },
-    ];
+<script>
+"use strict";
 
-    let current = 0;
-    let score = 0;
+/*
+ * NOUVA CODE CHALLENGES
+ * Python is executed in the browser with Pyodide.
+ * User code is NOT sent to the Flask server for execution.
+ */
 
-    const patternEl = document.getElementById("pattern");
-    const optionsEl = document.getElementById("options-container");
-    const feedbackEl = document.getElementById("feedback");
-    const nextBtn = document.getElementById("nextBtn");
-    const returnBtnContainer = document.getElementById("returnBtnContainer");
+const STORAGE_KEY = "nouva_code_challenges_v2";
+const XP_PER_MISSION = 100;
 
-    function loadChallenge() {
-      const challenge = challenges[current];
-      patternEl.src = challenge.pattern; 
-      optionsEl.innerHTML = "";
-      feedbackEl.textContent = "";
-      nextBtn.classList.add("hidden");
+const missions = [
+    {
+        world: "World 1 · Trainee",
+        level: 1,
+        difficulty: "BEGINNER",
+        title: "Calculate employee salary",
+        description: "Write a reusable function that calculates an employee's net salary.",
+        boss: "Welcome to the team! HR needs a function that calculates net salary. We receive the gross salary and the total deductions. Make sure your function returns the correct result.",
+        requirements: [
+            "Create a function called calculate_salary(gross_salary, deductions).",
+            "Return the gross salary minus the deductions.",
+            "Do not hardcode the expected answer."
+        ],
+        starter: `def calculate_salary(gross_salary, deductions):
+    # TODO: calculate and return the net salary
+    pass
 
-      challenge.options.forEach(opt => {
-        const btn = document.createElement("button");
-        btn.className = "p-2 bg-[#C5A46D] rounded-lg shadow hover:scale-105 transition";
-        const img = document.createElement("img");
-        img.src = opt.img; 
-        img.alt = "opción";
-        img.className = "w-full h-32 object-contain rounded";
-        btn.appendChild(img);
+print(calculate_salary(800, 100))`,
+        tests: `
+assert calculate_salary(800, 100) == 700
+assert calculate_salary(1000, 250) == 750
+assert calculate_salary(500, 0) == 500
+assert calculate_salary(0, 0) == 0
+`,
+        hint: "Inside the function, subtract deductions from gross_salary and return the result.",
+        explanation: "The function must calculate gross_salary - deductions and return that value."
+    },
+    {
+        world: "World 1 · Trainee",
+        level: 1,
+        difficulty: "BEGINNER",
+        title: "Validate an account",
+        description: "Create a validation function for a company's account registration form.",
+        boss: "The registration form is accepting usernames that are too short. Create a function that returns True when the username has at least five characters and False otherwise.",
+        requirements: [
+            "Create is_valid_username(username).",
+            "A username must contain at least five characters.",
+            "Return a Boolean value."
+        ],
+        starter: `def is_valid_username(username):
+    # TODO: validate the username
+    pass
 
-        btn.onclick = () => checkAnswer(opt.correct, btn);
-        optionsEl.appendChild(btn);
-      });
+print(is_valid_username("gabriel"))`,
+        tests: `
+assert is_valid_username("gabriel") is True
+assert is_valid_username("admin") is True
+assert is_valid_username("alex") is False
+assert is_valid_username("") is False
+`,
+        hint: "Python strings have a built-in function that returns their length.",
+        explanation: "Return whether len(username) is greater than or equal to five."
+    },
+    {
+        world: "World 1 · Trainee",
+        level: 1,
+        difficulty: "BEGINNER",
+        title: "Fix the discount calculator",
+        description: "Correct a pricing function that calculates discounts incorrectly.",
+        boss: "The online store is charging customers the wrong final price. Fix the function so that a discount percentage is applied to the original price.",
+        requirements: [
+            "Create final_price(price, discount_percent).",
+            "Return the price after the percentage discount.",
+            "For this mission, the discount percentage will be between 0 and 100."
+        ],
+        starter: `def final_price(price, discount_percent):
+    # TODO: calculate the final price
+    pass
+
+print(final_price(100, 20))`,
+        tests: `
+assert abs(final_price(100, 20) - 80) < 0.000001
+assert abs(final_price(200, 10) - 180) < 0.000001
+assert abs(final_price(50, 0) - 50) < 0.000001
+assert abs(final_price(80, 100) - 0) < 0.000001
+`,
+        hint: "Calculate the discount amount first, then subtract it from the original price.",
+        explanation: "The discount amount is price * discount_percent / 100."
+    },
+    {
+        world: "World 2 · Junior",
+        level: 2,
+        difficulty: "EASY–INTERMEDIATE",
+        title: "Calculate daily sales",
+        description: "Create a function to calculate the total revenue recorded during a business day.",
+        boss: "The store manager needs the total sales from today's transactions. The cashier system provides a list of amounts. Write a function that adds them together.",
+        requirements: [
+            "Create calculate_sales(sales).",
+            "Return the sum of all amounts.",
+            "An empty list must return zero."
+        ],
+        starter: `def calculate_sales(sales):
+    total = 0
+
+    # TODO: add every sale to total
+
+    return total
+
+print(calculate_sales([25, 40, 15, 60]))`,
+        tests: `
+assert calculate_sales([25, 40, 15, 60]) == 140
+assert calculate_sales([10, 20]) == 30
+assert calculate_sales([0, 0, 0]) == 0
+assert calculate_sales([]) == 0
+`,
+        hint: "Loop through the list and add each sale to total. Python also has a built-in sum function.",
+        explanation: "Add every item in sales, or return sum(sales)."
+    },
+    {
+        world: "World 2 · Junior",
+        level: 2,
+        difficulty: "EASY–INTERMEDIATE",
+        title: "Find duplicate emails",
+        description: "Help the support team detect duplicate email addresses in a registration list.",
+        boss: "We discovered that some customers registered more than once. Return a list containing each duplicated email only once, in the order each duplicate is first detected.",
+        requirements: [
+            "Create find_duplicates(emails).",
+            "Return each duplicated email once.",
+            "Keep the order in which duplicates are detected."
+        ],
+        starter: `def find_duplicates(emails):
+    # TODO: find repeated email addresses
+    pass
+
+emails = ["a@test.com", "b@test.com", "a@test.com"]
+print(find_duplicates(emails))`,
+        tests: `
+assert find_duplicates(["a", "b", "a"]) == ["a"]
+assert find_duplicates(["a", "b", "c"]) == []
+assert find_duplicates(["a", "a", "a", "b", "b"]) == ["a", "b"]
+assert find_duplicates([]) == []
+assert find_duplicates(["b", "a", "b", "a"]) == ["b", "a"]
+`,
+        hint: "Use one collection to remember items you have seen and another to store duplicates.",
+        explanation: "Track seen items and add an item to duplicates only the first time you discover it has appeared before."
+    },
+    {
+        world: "World 2 · Junior",
+        level: 2,
+        difficulty: "EASY–INTERMEDIATE",
+        title: "Apply customer discounts",
+        description: "Implement a discount policy for the company's online store.",
+        boss: "Marketing has approved a discount policy: purchases of $100 or more receive 10% off. All other purchases receive no discount.",
+        requirements: [
+            "Create apply_discount(total).",
+            "Return the discounted total when total is at least 100.",
+            "Do not modify purchases below 100."
+        ],
+        starter: `def apply_discount(total):
+    # TODO: implement the discount policy
+    pass
+
+print(apply_discount(150))`,
+        tests: `
+assert abs(apply_discount(150) - 135) < 0.000001
+assert apply_discount(99) == 99
+assert abs(apply_discount(100) - 90) < 0.000001
+assert apply_discount(0) == 0
+`,
+        hint: "Use an if statement to check the minimum purchase amount.",
+        explanation: "If total >= 100, return total * 0.9; otherwise return total."
+    },
+    {
+        world: "World 3 · Developer",
+        level: 3,
+        difficulty: "INTERMEDIATE",
+        title: "Debug the inventory",
+        description: "Fix a function that calculates how many units remain in stock.",
+        boss: "The inventory dashboard is reporting incorrect stock levels. The function should subtract units sold from the original stock, but the existing code contains a logical error.",
+        requirements: [
+            "Create remaining_stock(stock, sold).",
+            "Return stock minus sold.",
+            "The solution must work for different input values."
+        ],
+        starter: `def remaining_stock(stock, sold):
+    # This calculation is incorrect.
+    return stock + sold
+
+print(remaining_stock(50, 12))`,
+        tests: `
+assert remaining_stock(50, 12) == 38
+assert remaining_stock(100, 25) == 75
+assert remaining_stock(10, 10) == 0
+assert remaining_stock(5, 0) == 5
+`,
+        hint: "Ask yourself whether selling an item should increase or decrease inventory.",
+        explanation: "Subtract sold from stock instead of adding it."
+    },
+    {
+        world: "World 3 · Developer",
+        level: 3,
+        difficulty: "INTERMEDIATE",
+        title: "Search the product catalog",
+        description: "Implement a case-insensitive product search for an online store.",
+        boss: "Customers cannot find products unless they type the exact capitalization used in the catalog. Fix this by creating a case-insensitive search.",
+        requirements: [
+            "Create search_products(products, query).",
+            "Return all product names containing the query.",
+            "The search must ignore capitalization."
+        ],
+        starter: `def search_products(products, query):
+    # TODO: return matching product names
+    pass
+
+products = ["Laptop", "Phone", "Gaming Mouse"]
+print(search_products(products, "phone"))`,
+        tests: `
+assert search_products(["Laptop", "Phone", "Gaming Mouse"], "phone") == ["Phone"]
+assert search_products(["Laptop", "Phone", "Gaming Mouse"], "GAM") == ["Gaming Mouse"]
+assert search_products(["Keyboard", "Mouse"], "screen") == []
+assert search_products(["Phone", "Phone Case"], "phone") == ["Phone", "Phone Case"]
+`,
+        hint: "Convert both the product name and query to lowercase before checking whether one contains the other.",
+        explanation: "Filter the list using query.lower() in product.lower()."
+    },
+    {
+        world: "World 3 · Developer",
+        level: 3,
+        difficulty: "INTERMEDIATE",
+        title: "Analyze customer transactions",
+        description: "Create a report showing how many transactions meet a minimum amount.",
+        boss: "Finance needs to identify transactions of at least $100 for a report. Write a function that counts qualifying transactions.",
+        requirements: [
+            "Create count_large_transactions(transactions, minimum).",
+            "Count transactions greater than or equal to minimum.",
+            "Return an integer."
+        ],
+        starter: `def count_large_transactions(transactions, minimum):
+    # TODO: count qualifying transactions
+    pass
+
+print(count_large_transactions([20, 100, 150, 80], 100))`,
+        tests: `
+assert count_large_transactions([20, 100, 150, 80], 100) == 2
+assert count_large_transactions([1, 2, 3], 10) == 0
+assert count_large_transactions([100, 100], 100) == 2
+assert count_large_transactions([], 50) == 0
+`,
+        hint: "Loop through the transactions and increment a counter whenever the amount meets the threshold.",
+        explanation: "Count each amount where amount >= minimum."
+    },
+    {
+        world: "World 4 · Advanced Developer",
+        level: 4,
+        difficulty: "ADVANCED",
+        title: "Find the most frequent event",
+        description: "Analyze application logs to discover the most frequent event.",
+        boss: "Our monitoring dashboard needs to identify the most common event in a log. Return the most frequent item. If multiple items share the highest frequency, return the one that appears first.",
+        requirements: [
+            "Create most_frequent(events).",
+            "Return None when the list is empty.",
+            "Resolve ties using the first occurrence."
+        ],
+        starter: `def most_frequent(events):
+    # TODO: find the most frequent event
+    pass
+
+print(most_frequent(["login", "error", "login", "login", "error"]))`,
+        tests: `
+assert most_frequent(["login", "error", "login", "login", "error"]) == "login"
+assert most_frequent(["a", "b", "a", "b"]) == "a"
+assert most_frequent(["error"]) == "error"
+assert most_frequent([]) is None
+`,
+        hint: "Count each event, then select the item with the highest count. Preserve the first occurrence when counts are tied.",
+        explanation: "A dictionary can count occurrences. Track the best candidate while iterating through the original list."
+    },
+    {
+        world: "World 4 · Advanced Developer",
+        level: 4,
+        difficulty: "ADVANCED",
+        title: "Validate API requests",
+        description: "Write a validation function for data submitted to a user-registration API.",
+        boss: "The backend team needs to reject incomplete registration requests before saving them. A valid payload must contain a non-empty string username and a valid-looking email address containing '@'.",
+        requirements: [
+            "Create validate_registration(payload).",
+            "Return True only when username and email meet the requirements.",
+            "Handle missing fields and unexpected input types."
+        ],
+        starter: `def validate_registration(payload):
+    # TODO: validate the registration payload
+    pass
+
+print(validate_registration({
+    "username": "gabriel",
+    "email": "g@example.com"
+}))`,
+        tests: `
+assert validate_registration({"username": "gabriel", "email": "g@example.com"}) is True
+assert validate_registration({"username": "", "email": "g@example.com"}) is False
+assert validate_registration({"username": "gabriel", "email": "invalid"}) is False
+assert validate_registration({}) is False
+assert validate_registration(None) is False
+assert validate_registration({"username": 123, "email": "g@example.com"}) is False
+`,
+        hint: "Check the type of payload before accessing its fields. Then validate each field separately.",
+        explanation: "Check for a dictionary, a non-empty string username, a string email, and '@' in the email."
+    },
+    {
+        world: "World 4 · Advanced Developer",
+        level: 4,
+        difficulty: "ADVANCED",
+        title: "Group sales by region",
+        description: "Transform a list of sales records into a regional revenue report.",
+        boss: "The sales director needs a summary of revenue per region. Each transaction contains a region name and an amount. Return a dictionary containing the total for each region.",
+        requirements: [
+            "Create sales_by_region(transactions).",
+            "Each transaction is a dictionary with region and amount.",
+            "Return the total amount for each region."
+        ],
+        starter: `def sales_by_region(transactions):
+    # TODO: aggregate sales by region
+    pass
+
+data = [
+    {"region": "North", "amount": 100},
+    {"region": "South", "amount": 50},
+    {"region": "North", "amount": 25}
+]
+
+print(sales_by_region(data))`,
+        tests: `
+assert sales_by_region([
+    {"region": "North", "amount": 100},
+    {"region": "South", "amount": 50},
+    {"region": "North", "amount": 25}
+]) == {"North": 125, "South": 50}
+assert sales_by_region([]) == {}
+assert sales_by_region([{"region": "West", "amount": 0}]) == {"West": 0}
+`,
+        hint: "For each transaction, add its amount to the current total for that region.",
+        explanation: "Use a dictionary and accumulate each transaction's amount under its region."
+    },
+    {
+        world: "World 5 · Expert Missions",
+        level: 5,
+        difficulty: "EXPERT",
+        title: "Detect suspicious transactions",
+        description: "Create a simple rule-based detector to flag potentially suspicious transactions.",
+        boss: "The fraud-analysis team needs a preliminary rule-based detector. Flag a transaction if its amount is at least the threshold or if its amount is negative. Return the indices of flagged transactions.",
+        requirements: [
+            "Create suspicious_transactions(amounts, threshold).",
+            "Return the zero-based indices of flagged transactions.",
+            "Keep indices in their original order."
+        ],
+        starter: `def suspicious_transactions(amounts, threshold):
+    # TODO: identify suspicious transaction indices
+    pass
+
+print(suspicious_transactions([20, 500, -5, 80], 300))`,
+        tests: `
+assert suspicious_transactions([20, 500, -5, 80], 300) == [1, 2]
+assert suspicious_transactions([1, 2, 3], 100) == []
+assert suspicious_transactions([300, 301], 300) == [0, 1]
+assert suspicious_transactions([], 50) == []
+`,
+        hint: "Use enumerate() to access both the index and amount for every transaction.",
+        explanation: "Flag the index when the amount is at least the threshold or less than zero."
+    },
+    {
+        world: "World 5 · Expert Missions",
+        level: 5,
+        difficulty: "EXPERT",
+        title: "Optimize duplicate detection",
+        description: "Create an efficient function that identifies duplicates in a large dataset.",
+        boss: "A service is processing thousands of IDs and needs to identify duplicates without repeatedly scanning the entire list. Return the duplicated IDs once each, preserving the order in which the duplicates are first detected.",
+        requirements: [
+            "Create efficient_duplicates(items).",
+            "Return each duplicated item once.",
+            "Preserve duplicate-detection order."
+        ],
+        starter: `def efficient_duplicates(items):
+    # TODO: implement efficient duplicate detection
+    pass
+
+print(efficient_duplicates([4, 2, 4, 7, 2, 2]))`,
+        tests: `
+assert efficient_duplicates([4, 2, 4, 7, 2, 2]) == [4, 2]
+assert efficient_duplicates([1, 2, 3]) == []
+assert efficient_duplicates([]) == []
+assert efficient_duplicates(["a", "a", "b", "b"]) == ["a", "b"]
+`,
+        hint: "Use a set for fast membership checks and a list for preserving the output order.",
+        explanation: "A set can track seen values efficiently, while a second set can track duplicates already added to the result."
+    },
+    {
+        world: "World 5 · Expert Missions",
+        level: 5,
+        difficulty: "EXPERT",
+        title: "Build an inventory manager",
+        description: "Implement a small inventory-management function that applies stock changes.",
+        boss: "The product team needs a function to apply stock movements to an inventory. Each movement contains a product name and a signed quantity change. Return the updated inventory dictionary. Products not previously present should start at zero.",
+        requirements: [
+            "Create update_inventory(inventory, movements).",
+            "Each movement is a tuple: (product, quantity_change).",
+            "Return an updated dictionary without modifying the original dictionary."
+        ],
+        starter: `def update_inventory(inventory, movements):
+    # TODO: return the updated inventory
+    pass
+
+stock = {"Laptop": 10, "Mouse": 20}
+changes = [("Laptop", -2), ("Keyboard", 5)]
+
+print(update_inventory(stock, changes))`,
+        tests: `
+assert update_inventory({"Laptop": 10, "Mouse": 20}, [("Laptop", -2), ("Keyboard", 5)]) == {"Laptop": 8, "Mouse": 20, "Keyboard": 5}
+assert update_inventory({}, [("Mouse", 3), ("Mouse", 2)]) == {"Mouse": 5}
+assert update_inventory({"Laptop": 10}, []) == {"Laptop": 10}
+assert update_inventory({}, []) == {}
+`,
+        hint: "Make a copy of the original inventory, then process each movement and update the corresponding product quantity.",
+        explanation: "Copy the dictionary first. For each movement, add the change to the current quantity, using zero for new products."
     }
+];
 
-    function checkAnswer(isCorrect, btn) {
-      const challenge = challenges[current];
-      const buttons = optionsEl.querySelectorAll("button");
+let state = {
+    completed: [],
+    xp: 0,
+    current: 0
+};
 
-      buttons.forEach((b, i) => {
-        b.disabled = true;
-        if (challenge.options[i].correct) {
-          b.classList.remove("bg-[#C5A46D]");
-          b.classList.add("bg-green-500");
-        }
-      });
+let pyodideInstance = null;
+let pyodideLoading = null;
+let running = false;
 
-      if (isCorrect) {
-        feedbackEl.textContent = "✅ ¡Good job!";
-        feedbackEl.className = "text-green-600 font-bold";
-        score++;
-      } else {
-        btn.classList.remove("bg-[#C5A46D]");
-        btn.classList.add("bg-red-500");
-        feedbackEl.textContent = "❌ Wrong answer, the correct answer is in green.";
-        feedbackEl.className = "text-red-600 font-bold";
-      }
-
-      nextBtn.classList.remove("hidden");
-    }
-
-    nextBtn.onclick = () => {
-      current++;
-      if (current < challenges.length) {
-        loadChallenge();
-      } else {
-        patternEl.classList.add("hidden");
-        optionsEl.innerHTML = "";
-        feedbackEl.textContent = `🎉 You finish the challenge! Your score is: ${score} / ${challenges.length}`;
-        feedbackEl.className = "font-bold";
-        nextBtn.classList.add("hidden");
-        returnBtnContainer.classList.remove("hidden");
-      }
-    };
-
-    loadChallenge();
-  </script>
-
-  <script>
-document.addEventListener("DOMContentLoaded", async () => {
+function loadState() {
     try {
-        const res = await fetch("http://127.0.0.1:5000/profile", {
-            credentials: "include" 
-        });
-        const data = await res.json();
-        if (data && !data.error && data.foto_url) {
-            document.getElementById("navbar-pic").src = "/static/" + data.foto_url;
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+
+        if (Array.isArray(saved.completed)) {
+            state.completed = [...new Set(saved.completed)]
+                .filter(n => Number.isInteger(n) && n >= 0 && n < missions.length);
         }
-    } catch (err) {
-        console.error("Error cargando foto:", err);
+
+        state.xp = state.completed.length * XP_PER_MISSION;
+
+        const requested = Number.isInteger(saved.current) ? saved.current : 0;
+        state.current = Math.max(0, Math.min(requested, missions.length - 1));
+
+        while (
+            state.current > 0 &&
+            !state.completed.includes(state.current - 1)
+        ) {
+            state.current--;
+        }
+    } catch (error) {
+        console.warn("Could not load saved challenge progress.", error);
+    }
+}
+
+function saveState() {
+    state.xp = state.completed.length * XP_PER_MISSION;
+
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {
+        console.warn("Could not save challenge progress.", error);
+    }
+}
+
+function currentRank() {
+    if (state.completed.length >= 15) return "Code Champion";
+    if (state.completed.length >= 12) return "Expert";
+    if (state.completed.length >= 9) return "Advanced";
+    if (state.completed.length >= 6) return "Developer";
+    if (state.completed.length >= 3) return "Junior";
+    return "Trainee";
+}
+
+function renderStats() {
+    const completedCount = state.completed.length;
+    const percentage = Math.round(completedCount / missions.length * 100);
+
+    document.getElementById("xpValue").textContent = state.xp;
+    document.getElementById("completedValue").textContent = completedCount;
+    document.getElementById("rankValue").textContent = currentRank();
+    document.getElementById("progressFill").style.width = percentage + "%";
+    document.getElementById("progressText").textContent =
+        percentage + "% completed · " + completedCount + " of " + missions.length + " missions";
+}
+
+function renderMissionList() {
+    const container = document.getElementById("missionList");
+    container.innerHTML = "";
+
+    let currentWorld = "";
+
+    missions.forEach((mission, index) => {
+        if (mission.world !== currentWorld) {
+            currentWorld = mission.world;
+
+            const heading = document.createElement("div");
+            heading.className = "world-heading";
+            heading.textContent = currentWorld;
+            container.appendChild(heading);
+        }
+
+        const completed = state.completed.includes(index);
+        const unlocked = index === 0 || state.completed.includes(index - 1);
+
+        const button = document.createElement("button");
+        button.className = "mission-button";
+
+        if (index === state.current) button.classList.add("active");
+        if (completed) button.classList.add("completed");
+
+        button.disabled = !unlocked;
+        button.type = "button";
+
+        const number = document.createElement("span");
+        number.className = "mission-number";
+        number.textContent = completed ? "✓" : unlocked ? String(index + 1) : "🔒";
+
+        const details = document.createElement("span");
+
+        const name = document.createElement("span");
+        name.className = "mission-name";
+        name.textContent = mission.title;
+
+        const meta = document.createElement("span");
+        meta.className = "mission-meta";
+        meta.textContent = completed ? "Completed · +" + XP_PER_MISSION + " XP" :
+            unlocked ? mission.difficulty : "Complete the previous mission";
+
+        details.appendChild(name);
+        details.appendChild(meta);
+
+        button.appendChild(number);
+        button.appendChild(details);
+
+        button.addEventListener("click", () => {
+            if (unlocked) {
+                state.current = index;
+                saveState();
+                renderAll();
+            }
+        });
+
+        container.appendChild(button);
+    });
+}
+
+function renderMission() {
+    const mission = missions[state.current];
+
+    document.getElementById("levelBadge").textContent =
+        "LEVEL " + mission.level;
+
+    document.getElementById("difficultyBadge").textContent =
+        mission.difficulty;
+
+    document.getElementById("xpBadge").textContent =
+        state.completed.includes(state.current) ? "COMPLETED" : "+" + XP_PER_MISSION + " XP";
+
+    document.getElementById("missionTitle").textContent = mission.title;
+    document.getElementById("missionDescription").textContent = mission.description;
+    document.getElementById("bossMessage").textContent = mission.boss;
+
+    const requirements = document.getElementById("requirements");
+    requirements.innerHTML = "";
+
+    mission.requirements.forEach(text => {
+        const li = document.createElement("li");
+        li.textContent = text;
+        requirements.appendChild(li);
+    });
+
+    document.getElementById("codeEditor").value = mission.starter;
+    document.getElementById("consoleOutput").textContent =
+        "Your program output will appear here.";
+
+    hideFeedback();
+    hideHint();
+
+    document.getElementById("nextButton").disabled =
+        !state.completed.includes(state.current) ||
+        state.current >= missions.length - 1;
+
+    document.getElementById("submitButton").disabled =
+        state.completed.includes(state.current);
+
+    document.getElementById("submitButton").textContent =
+        state.completed.includes(state.current) ? "✓ Mission completed" : "✓ Submit solution";
+}
+
+function renderAll() {
+    renderStats();
+    renderMissionList();
+    renderMission();
+}
+
+function showFeedback(type, message) {
+    const box = document.getElementById("feedback");
+    box.className = "feedback " + type;
+    box.textContent = message;
+}
+
+function hideFeedback() {
+    const box = document.getElementById("feedback");
+    box.className = "feedback";
+    box.textContent = "";
+}
+
+function showHint() {
+    const box = document.getElementById("hintBox");
+    box.textContent = "💡 Hint: " + missions[state.current].hint;
+    box.style.display = "block";
+}
+
+function hideHint() {
+    const box = document.getElementById("hintBox");
+    box.textContent = "";
+    box.style.display = "none";
+}
+
+function resetCode() {
+    document.getElementById("codeEditor").value =
+        missions[state.current].starter;
+
+    document.getElementById("consoleOutput").textContent =
+        "Editor reset to the original starter code.";
+
+    hideFeedback();
+}
+
+async function getPyodide() {
+    if (pyodideInstance) return pyodideInstance;
+    if (pyodideLoading) return pyodideLoading;
+
+    pyodideLoading = (async () => {
+        document.getElementById("consoleOutput").textContent =
+            "Loading Python runtime for the first time. This may take a moment...";
+
+        const instance = await loadPyodide();
+        pyodideInstance = instance;
+        return instance;
+    })();
+
+    try {
+        return await pyodideLoading;
+    } catch (error) {
+        pyodideLoading = null;
+        throw error;
+    }
+}
+
+async function executePython(code) {
+    const pyodide = await getPyodide();
+
+    await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+
+_nouva_stdout = StringIO()
+_nouva_stderr = StringIO()
+sys.stdout = _nouva_stdout
+sys.stderr = _nouva_stderr
+`);
+
+    let error = null;
+
+    try {
+        await pyodide.runPythonAsync(code);
+    } catch (exception) {
+        error = exception.message || String(exception);
+    }
+
+    const stdout = pyodide.runPython("str(_nouva_stdout.getvalue())");
+    const stderr = pyodide.runPython("str(_nouva_stderr.getvalue())");
+
+    await pyodide.runPythonAsync(`
+sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
+`);
+
+    return {
+        stdout: stdout + (stderr ? "\n" + stderr : ""),
+        error
+    };
+}
+
+async function runCode() {
+    if (running) return;
+
+    running = true;
+    setButtonsDisabled(true);
+    hideFeedback();
+
+    try {
+        const code = document.getElementById("codeEditor").value;
+        const result = await executePython(code);
+
+        let output = result.stdout || "(No output)";
+        if (result.error) output += "\n\nError:\n" + result.error;
+
+        document.getElementById("consoleOutput").textContent = output;
+
+        if (result.error) {
+            showFeedback("error", "Your code raised an error. Read the console output, fix the problem and try again.");
+        } else {
+            showFeedback("info", "Code executed. Now submit your solution to run the mission's automated tests.");
+        }
+    } catch (error) {
+        document.getElementById("consoleOutput").textContent =
+            "Could not initialize Python.\n" + (error.message || String(error));
+
+        showFeedback("error", "The Python runtime could not start. Check your internet connection and reload the page.");
+    } finally {
+        running = false;
+        setButtonsDisabled(false);
+        updateSubmitButton();
+    }
+}
+
+async function checkSolution() {
+    if (running) return;
+
+    if (state.completed.includes(state.current)) {
+        showFeedback("success", "You have already completed this mission.");
+        return;
+    }
+
+    running = true;
+    setButtonsDisabled(true);
+    hideFeedback();
+
+    const mission = missions[state.current];
+    const userCode = document.getElementById("codeEditor").value;
+
+    try {
+        const pyodide = await getPyodide();
+
+        await pyodide.runPythonAsync(`
+import sys
+from io import StringIO
+_nouva_test_stdout = StringIO()
+_nouva_test_stderr = StringIO()
+sys.stdout = _nouva_test_stdout
+sys.stderr = _nouva_test_stderr
+`);
+
+        try {
+            await pyodide.runPythonAsync(userCode);
+            await pyodide.runPythonAsync(mission.tests);
+
+            document.getElementById("consoleOutput").textContent =
+                pyodide.runPython("str(_nouva_test_stdout.getvalue())") ||
+                "All automated tests passed.";
+
+            if (!state.completed.includes(state.current)) {
+                state.completed.push(state.current);
+                state.xp = state.completed.length * XP_PER_MISSION;
+                saveState();
+            }
+
+            showFeedback(
+                "success",
+                "Excellent work! All mission tests passed. You earned " +
+                XP_PER_MISSION + " XP. Review your solution, then continue to the next mission."
+            );
+
+            renderStats();
+            renderMissionList();
+
+            document.getElementById("nextButton").disabled =
+                state.current >= missions.length - 1;
+
+            document.getElementById("xpBadge").textContent = "COMPLETED";
+            document.getElementById("submitButton").textContent = "✓ Mission completed";
+            document.getElementById("submitButton").disabled = true;
+
+        } catch (error) {
+            document.getElementById("consoleOutput").textContent =
+                "Test failure or Python error:\n" + (error.message || String(error));
+
+            showFeedback(
+                "error",
+                "The mission is not complete yet. Review the error, compare your code with the requirements, and try again."
+            );
+        } finally {
+            await pyodide.runPythonAsync(`
+sys.stdout = sys.__stdout__
+sys.stderr = sys.__stderr__
+`);
+        }
+    } catch (error) {
+        document.getElementById("consoleOutput").textContent =
+            "Python runtime error:\n" + (error.message || String(error));
+
+        showFeedback(
+            "error",
+            "Python could not run. Check your connection and reload the page before trying again."
+        );
+    } finally {
+        running = false;
+        setButtonsDisabled(false);
+        updateSubmitButton();
+    }
+}
+
+function setButtonsDisabled(disabled) {
+    document.getElementById("runButton").disabled = disabled;
+    document.getElementById("submitButton").disabled =
+        disabled || state.completed.includes(state.current);
+}
+
+function updateSubmitButton() {
+    if (state.completed.includes(state.current)) {
+        document.getElementById("submitButton").disabled = true;
+        document.getElementById("submitButton").textContent = "✓ Mission completed";
+    } else {
+        document.getElementById("submitButton").disabled = running;
+        document.getElementById("submitButton").textContent = "✓ Submit solution";
+    }
+}
+
+function nextMission() {
+    if (!state.completed.includes(state.current)) {
+        showFeedback("error", "Complete the current mission before moving forward.");
+        return;
+    }
+
+    if (state.current < missions.length - 1) {
+        state.current++;
+        saveState();
+        renderAll();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+        showFeedback("success", "Congratulations! You completed all 15 missions.");
+    }
+}
+
+/* Load the user's profile photo using the existing Flask endpoint. */
+document.addEventListener("DOMContentLoaded", async () => {
+    loadState();
+    renderAll();
+
+    try {
+        const response = await fetch("/profile", {
+            credentials: "same-origin"
+        });
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        if (data && !data.error && data.foto_url) {
+            document.getElementById("navbar-pic").src =
+                "/static/" + data.foto_url;
+        }
+    } catch (error) {
+        console.warn("Could not load profile photo.", error);
     }
 });
 </script>
-
-  <footer class="bg-[#00224F] text-white text-center py-6 mt-10">
-    <p class="text-sm">&copy; 2025 NoUva. All rights reserved.</p>
-  </footer>
 
 </body>
 </html>

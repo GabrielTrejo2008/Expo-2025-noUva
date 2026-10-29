@@ -1,95 +1,694 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Challenges</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <title>Challenges | noUva</title>
+  <meta name="description" content="Develop your skills with noUva challenges in computer science, mathematics, algorithmic thinking, problem solving, and communication.">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind theme -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink: '#00224F',
+            deep: '#001737',
+            grape: '#7C4DFF',
+            sun: '#FFD54A',
+            paper: '#F5F6FB'
+          },
+          fontFamily: {
+            display: ['Bricolage Grotesque', 'sans-serif'],
+            sans: ['DM Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --ink: #00224F;
+      --deep: #001737;
+      --grape: #7C4DFF;
+      --sun: #FFD54A;
+      --paper: #F5F6FB;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+    }
+
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255,255,255,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.045) 1px, transparent 1px);
+      background-size: 42px 42px;
+    }
+
+    .hero-glow {
+      background:
+        radial-gradient(circle at 80% 25%, rgba(124,77,255,.25), transparent 32%),
+        radial-gradient(circle at 10% 90%, rgba(255,213,74,.09), transparent 30%);
+    }
+
+    .challenge-card {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 1px solid rgba(0,34,79,.09);
+      background: #fff;
+      border-radius: 1.4rem;
+      box-shadow: 0 8px 28px rgba(0,23,55,.045);
+      transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+    }
+
+    .challenge-card::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: 0 0 auto;
+      height: 4px;
+      background: var(--grape);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .25s ease;
+    }
+
+    .challenge-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(124,77,255,.35);
+      box-shadow: 0 18px 40px rgba(0,23,55,.10);
+    }
+
+    .challenge-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .challenge-card.primary-card::before {
+      background: var(--sun);
+    }
+
+    .icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 4.25rem;
+      height: 4.25rem;
+      border-radius: 1.2rem;
+      background: #F0EBFF;
+      color: var(--grape);
+      transition: transform .25s ease;
+    }
+
+    .challenge-card:hover .icon-box {
+      transform: rotate(-4deg) scale(1.06);
+    }
+
+    .primary-card .icon-box {
+      background: #FFF4C7;
+      color: var(--ink);
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--sun);
+    }
+
+    .focus-ring:focus-visible {
+      outline: 3px solid var(--sun);
+      outline-offset: 4px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans">
 
-<nav class="bg-[#00224F] text-white p-4">
-  <div class="container mx-auto flex items-center justify-between">
-    <!-- Logo -->
-    <img src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}" 
-         alt="Logo" class="h-16 w-40">
-    <div class="flex items-center space-x-6">
-      <a href="{{ url_for('home_page') }}" class="hover:underline">Home</a>
-      <a href="{{ url_for('universities_page') }}" class="hover:underline">Universities</a>
-      <a href="{{ url_for('podcasts_page') }}" class="hover:underline">Podcasts</a>
-      <a href="{{ url_for('challenges_page') }}" class="hover:underline">Challenges</a>
-      <a href="{{ url_for('subcription_page') }}" class="hover:underline">Get premium</a>
+<body class="min-h-screen">
 
-      <!-- Foto de perfil -->
-      <a href="{{ url_for('perfil_page') }}">
-        <img id="navbar-pic"
-             src="{{ url_for('static', filename='default.png') }}" 
-             alt="Profile"
-             class="h-10 w-10 rounded-full border-2 border-white object-cover object-center hover:scale-105 transition-transform duration-200">
+  <!-- NAVBAR: same design and structure as the reference page -->
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-ink/95 text-white backdrop-blur">
+    <nav class="relative mx-auto flex max-w-7xl items-center justify-between px-5 py-3 lg:px-8"
+         aria-label="Main navigation">
+
+      <a href="{{ url_for('home_page') }}"
+         aria-label="noUva home"
+         class="focus-ring rounded-lg">
+        <img
+          src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}"
+          alt="noUva"
+          class="h-12 w-32 object-contain">
       </a>
-    </div>
-  </div>
-</nav>
 
-  <main class="container mx-auto mt-10 p-5">
-    <h1 class="text-3xl font-bold text-gray-800 mb-4">What challenges we have?</h1>
-    <p class="text-lg text-gray-600 mb-10">
-      Here you can find and develop some of your skills with our challenges.
-    </p>
+      <button
+        id="menu-toggle"
+        type="button"
+        aria-controls="nav-links"
+        aria-expanded="false"
+        aria-label="Open menu"
+        class="focus-ring rounded-full border border-white/25 px-3.5 py-2 text-xl md:hidden">
+        ☰
+      </button>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-3">
-      <a href="{{ url_for('challengeFuncional_page') }}">
-        <div class="flex flex-col items-center border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition p-4 bg-white">
-          <img src="{{ url_for('static', filename='challenges-bar/logic and abstract reasoning.png') }}" alt="" class="h-16 w-16 rounded-md mb-2">
-          <span class="text-gray-800 font-medium text-center">Logic and abstract reasoning</span>
+      <div
+        id="nav-links"
+        class="absolute left-0 right-0 top-full hidden flex-col gap-5 border-b border-white/10 bg-ink p-6 md:static md:flex md:flex-row md:items-center md:gap-7 md:border-0 md:bg-transparent md:p-0">
+
+        <a href="{{ url_for('home_page') }}"
+           class="focus-ring rounded text-sm font-bold text-white/80 transition-colors hover:text-white">
+          Home
+        </a>
+
+        <a href="{{ url_for('universities_page') }}"
+           class="focus-ring rounded text-sm font-bold text-white/80 transition-colors hover:text-white">
+          Universities
+        </a>
+
+        <a href="{{ url_for('podcasts_page') }}"
+           class="focus-ring rounded text-sm font-bold text-white/80 transition-colors hover:text-white">
+          Podcasts
+        </a>
+
+        <a href="{{ url_for('challenges_page') }}"
+           aria-current="page"
+           class="focus-ring rounded text-sm font-bold text-sun">
+          Challenges
+        </a>
+
+        <a href="{{ url_for('subcription_page') }}"
+           class="focus-ring rounded-full bg-sun px-5 py-2 text-center text-sm font-bold text-ink transition-colors hover:bg-white">
+          Get premium
+        </a>
+
+        <a href="{{ url_for('perfil_page') }}"
+           aria-label="My profile"
+           class="focus-ring flex w-fit items-center gap-3 rounded-full">
+          <img
+            id="navbar-pic"
+            src="{{ url_for('static', filename='default.png') }}"
+            alt="Profile picture"
+            class="avatar">
+          <span class="text-sm font-bold text-white/80 md:hidden">My profile</span>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+
+  <main>
+
+    <!-- HERO -->
+    <section class="relative isolate overflow-hidden bg-deep text-white">
+      <div class="hero-grid hero-glow absolute inset-0 -z-10"></div>
+
+      <div class="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:py-20 lg:grid-cols-[1.2fr_.8fr] lg:px-8 lg:py-24">
+
+        <div>
+          <div class="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2">
+            <span class="h-2 w-2 rounded-full bg-sun"></span>
+            <span class="font-mono text-xs tracking-wide text-white/80">LEARN BY DOING</span>
+          </div>
+
+          <h1 class="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-5xl lg:text-6xl">
+            Turn your skills into
+            <span class="text-sun">real abilities.</span>
+          </h1>
+
+          <p class="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
+            Practice, experiment, and challenge yourself. Explore different skill areas and start building the knowledge you need for your future career.
+          </p>
+
+          <div class="mt-8 flex flex-wrap gap-3">
+            <a href="#challenge-categories"
+               class="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-sun px-6 py-3 font-bold text-ink transition hover:-translate-y-0.5 hover:bg-white">
+              Explore challenges
+              <span aria-hidden="true">↓</span>
+            </a>
+
+            <span class="inline-flex items-center rounded-full border border-white/20 px-5 py-3 text-sm font-medium text-white/75">
+              Learn at your own pace
+            </span>
+          </div>
         </div>
-      </a>
 
-      <a href="#">
-        <div class="flex flex-col items-center border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition p-4 bg-white">
-          <img src="{{ url_for('static', filename='challenges-bar/Solid maths.png') }}" alt="" class="h-16 w-16 rounded-md mb-2">
-          <span class="text-gray-800 font-medium text-center">Solid mathematics</span>
-        </div>
-      </a>
+        <!-- Decorative hero panel -->
+        <div class="relative mx-auto w-full max-w-md">
+          <div class="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-grape/30 blur-2xl"></div>
+          <div class="absolute -bottom-5 -left-4 h-28 w-28 rounded-full bg-sun/15 blur-2xl"></div>
 
-      <a href="#">
-        <div class="flex flex-col items-center border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition p-4 bg-white">
-          <img src="{{ url_for('static', filename='challenges-bar/algorithmic thinking.png') }}" alt="" class="h-16 w-16 rounded-md mb-2">
-          <span class="text-gray-800 font-medium text-center">Algorithmic thinking</span>
-        </div>
-      </a>
+          <div class="relative rounded-[2rem] border border-white/15 bg-white/[0.06] p-5 shadow-2xl backdrop-blur sm:p-7">
+            <div class="flex items-center justify-between border-b border-white/10 pb-5">
+              <div>
+                <p class="font-mono text-xs uppercase tracking-[.18em] text-white/45">Your next step</p>
+                <h2 class="mt-1 text-xl font-bold text-white">Challenge board</h2>
+              </div>
+              <div class="flex gap-1.5" aria-hidden="true">
+                <span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-sun"></span>
+                <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+              </div>
+            </div>
 
-      <a href="#">
-        <div class="flex flex-col items-center border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition p-4 bg-white">
-          <img src="{{ url_for('static', filename='challenges-bar/problem solving.png') }}" alt="" class="h-16 w-16 rounded-md mb-2">
-          <span class="text-gray-800 font-medium text-center">Problem solving</span>
-        </div>
-      </a>
+            <div class="space-y-3 py-5">
+              <div class="flex items-center gap-4 rounded-2xl bg-white/[0.07] p-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-sun text-xl text-ink">
+                  &lt;/&gt;
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="font-bold text-white">Computer science</p>
+                  <p class="mt-1 text-sm text-white/50">Build and practice</p>
+                </div>
+                <span class="text-sun" aria-hidden="true">↗</span>
+              </div>
 
-      <a href="#">
-        <div class="flex flex-col items-center border border-gray-300 rounded-xl shadow-md hover:shadow-lg transition p-4 bg-white">
-          <img src="{{ url_for('static', filename='challenges-bar/effective communcation.png') }}" alt="" class="h-16 w-16 rounded-md mb-2">
-          <span class="text-gray-800 font-medium text-center">Effective Communication</span>
+              <div class="flex items-center gap-4 rounded-2xl bg-white/[0.07] p-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-grape/30 text-xl text-white">
+                  ∑
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="font-bold text-white">Logical thinking</p>
+                  <p class="mt-1 text-sm text-white/50">Think in new ways</p>
+                </div>
+                <span class="text-white/40" aria-hidden="true">✦</span>
+              </div>
+
+              <div class="flex items-center gap-4 rounded-2xl bg-white/[0.07] p-4">
+                <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-400/15 text-xl text-emerald-300">
+                  ✓
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="font-bold text-white">Problem solving</p>
+                  <p class="mt-1 text-sm text-white/50">Find your solution</p>
+                </div>
+                <span class="text-white/40" aria-hidden="true">✦</span>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between rounded-xl bg-sun p-4 text-ink">
+              <div>
+                <p class="font-mono text-[10px] font-bold uppercase tracking-widest">Keep moving</p>
+                <p class="mt-1 font-bold">Progress starts with practice.</p>
+              </div>
+              <span class="text-2xl" aria-hidden="true">✳</span>
+            </div>
+          </div>
         </div>
-      </a>
-    </div>
+      </div>
+
+      <div class="h-1 w-full bg-gradient-to-r from-grape via-sun to-grape"></div>
+    </section>
+
+
+    <!-- CHALLENGE CATEGORIES -->
+    <section id="challenge-categories" class="mx-auto max-w-7xl px-5 py-16 sm:py-20 lg:px-8">
+
+      <div class="mb-10 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+        <div>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[.2em] text-grape">
+            Explore your potential
+          </p>
+          <h2 class="mt-3 text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+            What will you challenge today?
+          </h2>
+          <p class="mt-4 max-w-2xl leading-7 text-slate-600">
+            Choose an area, put your knowledge to the test, and strengthen the skills that matter for your future.
+          </p>
+        </div>
+
+        <div class="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-600">
+          <span class="h-2 w-2 rounded-full bg-grape"></span>
+          5 skill areas
+        </div>
+      </div>
+
+
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+
+        <!-- COMPUTER SCIENCE -->
+        <a href="{{ url_for('challengeFuncional_page') }}"
+           class="challenge-card primary-card focus-ring group flex min-h-[290px] flex-col p-6 sm:p-7"
+           aria-label="Explore Computer Science challenges">
+
+          <div class="flex items-start justify-between">
+            <div class="icon-box">
+              <img
+                src="{{ url_for('static', filename='challenges-bar/logic and abstract reasoning.png') }}"
+                alt=""
+                class="h-10 w-10 object-contain"
+                loading="lazy">
+            </div>
+
+            <span class="rounded-full bg-emerald-50 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-emerald-700">
+              Available
+            </span>
+          </div>
+
+          <div class="mt-6 flex flex-1 flex-col">
+            <p class="font-mono text-xs font-semibold uppercase tracking-widest text-grape">
+              01 / Technology
+            </p>
+            <h3 class="mt-2 text-2xl font-bold text-ink">
+              Computer science
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">
+              Practice programming, understand code, and develop solutions to real-world technical problems.
+            </p>
+
+            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+              <span class="text-sm font-bold text-ink">Start challenge</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-white transition group-hover:bg-grape"
+                    aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </a>
+
+
+        <!-- SOLID MATHEMATICS -->
+        <article class="challenge-card flex min-h-[290px] flex-col p-6 sm:p-7">
+          <div class="flex items-start justify-between">
+            <div class="icon-box">
+              <img
+                src="{{ url_for('static', filename='challenges-bar/Solid maths.png') }}"
+                alt=""
+                class="h-10 w-10 object-contain"
+                loading="lazy">
+            </div>
+
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Coming soon
+            </span>
+          </div>
+
+          <div class="mt-6 flex flex-1 flex-col">
+            <p class="font-mono text-xs font-semibold uppercase tracking-widest text-grape">
+              02 / Mathematics
+            </p>
+            <h3 class="mt-2 text-2xl font-bold text-ink">
+              Solid mathematics
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">
+              Strengthen your mathematical foundations through exercises that develop accuracy and analytical thinking.
+            </p>
+
+            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+              <span class="text-sm font-semibold text-slate-400">In development</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500"
+                    aria-hidden="true">∑</span>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- ALGORITHMIC THINKING -->
+        <article class="challenge-card flex min-h-[290px] flex-col p-6 sm:p-7">
+          <div class="flex items-start justify-between">
+            <div class="icon-box">
+              <img
+                src="{{ url_for('static', filename='challenges-bar/algorithmic thinking.png') }}"
+                alt=""
+                class="h-10 w-10 object-contain"
+                loading="lazy">
+            </div>
+
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Coming soon
+            </span>
+          </div>
+
+          <div class="mt-6 flex flex-1 flex-col">
+            <p class="font-mono text-xs font-semibold uppercase tracking-widest text-grape">
+              03 / Logic
+            </p>
+            <h3 class="mt-2 text-2xl font-bold text-ink">
+              Algorithmic thinking
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">
+              Break complex tasks into smaller steps and learn to design clear, logical, and efficient solutions.
+            </p>
+
+            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+              <span class="text-sm font-semibold text-slate-400">In development</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500"
+                    aria-hidden="true">⌘</span>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- PROBLEM SOLVING -->
+        <article class="challenge-card flex min-h-[290px] flex-col p-6 sm:p-7">
+          <div class="flex items-start justify-between">
+            <div class="icon-box">
+              <img
+                src="{{ url_for('static', filename='challenges-bar/problem solving.png') }}"
+                alt=""
+                class="h-10 w-10 object-contain"
+                loading="lazy">
+            </div>
+
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Coming soon
+            </span>
+          </div>
+
+          <div class="mt-6 flex flex-1 flex-col">
+            <p class="font-mono text-xs font-semibold uppercase tracking-widest text-grape">
+              04 / Strategy
+            </p>
+            <h3 class="mt-2 text-2xl font-bold text-ink">
+              Problem solving
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">
+              Analyze situations, compare alternatives, and find practical solutions to everyday and professional problems.
+            </p>
+
+            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+              <span class="text-sm font-semibold text-slate-400">In development</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500"
+                    aria-hidden="true">◎</span>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- EFFECTIVE COMMUNICATION -->
+        <article class="challenge-card flex min-h-[290px] flex-col p-6 sm:p-7">
+          <div class="flex items-start justify-between">
+            <div class="icon-box">
+              <img
+                src="{{ url_for('static', filename='challenges-bar/effective communcation.png') }}"
+                alt=""
+                class="h-10 w-10 object-contain"
+                loading="lazy">
+            </div>
+
+            <span class="rounded-full bg-slate-100 px-3 py-1 font-mono text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+              Coming soon
+            </span>
+          </div>
+
+          <div class="mt-6 flex flex-1 flex-col">
+            <p class="font-mono text-xs font-semibold uppercase tracking-widest text-grape">
+              05 / Communication
+            </p>
+            <h3 class="mt-2 text-2xl font-bold text-ink">
+              Effective communication
+            </h3>
+            <p class="mt-3 flex-1 text-sm leading-6 text-slate-600">
+              Improve how you express ideas, collaborate with others, and communicate clearly in academic and professional settings.
+            </p>
+
+            <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4">
+              <span class="text-sm font-semibold text-slate-400">In development</span>
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500"
+                    aria-hidden="true">✦</span>
+            </div>
+          </div>
+        </article>
+
+
+        <!-- FINAL CTA CARD -->
+        <div class="relative flex min-h-[290px] flex-col justify-between overflow-hidden rounded-[1.4rem] bg-ink p-6 text-white sm:p-7">
+          <div class="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-grape/30 blur-2xl"></div>
+
+          <div class="relative">
+            <span class="font-mono text-xs font-semibold uppercase tracking-[.2em] text-sun">
+              Your future starts here
+            </span>
+
+            <h3 class="mt-4 max-w-xs text-3xl font-extrabold leading-tight">
+              Learn something. Build something.
+            </h3>
+
+            <p class="mt-4 max-w-sm text-sm leading-6 text-white/65">
+              Every challenge is an opportunity to improve. Start with the skills you have and keep building.
+            </p>
+          </div>
+
+          <a href="{{ url_for('home_page') }}"
+             class="focus-ring relative mt-7 inline-flex w-fit items-center gap-2 rounded-full bg-sun px-5 py-3 text-sm font-bold text-ink transition hover:bg-white">
+            Back to home
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- BOTTOM BANNER -->
+    <section class="px-5 pb-16 lg:px-8">
+      <div class="mx-auto flex max-w-7xl flex-col gap-5 rounded-3xl border border-slate-200 bg-white p-7 sm:p-9 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="font-mono text-xs font-semibold uppercase tracking-[.2em] text-grape">
+            Keep growing
+          </p>
+          <h2 class="mt-2 text-2xl font-bold text-ink sm:text-3xl">
+            Your progress starts with one challenge.
+          </h2>
+          <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+            Explore the available Computer Science challenges and keep an eye out for new skill areas.
+          </p>
+        </div>
+
+        <a href="{{ url_for('challengeFuncional_page') }}"
+           class="focus-ring inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 font-bold text-white transition hover:bg-grape">
+          Start learning
+          <span aria-hidden="true">↗</span>
+        </a>
+      </div>
+    </section>
+
   </main>
 
+
+  <!-- FOOTER -->
+  <footer class="bg-deep text-white">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-8">
+      <a href="{{ url_for('home_page') }}"
+         class="focus-ring w-fit rounded-lg"
+         aria-label="noUva home">
+        <img
+          src="{{ url_for('static', filename='home/logoFondoAzul.jpeg') }}"
+          alt="noUva"
+          class="h-10 w-28 object-contain">
+      </a>
+
+      <p class="text-sm text-white/50">
+        © 2026 noUva. Learn today, build your tomorrow.
+      </p>
+
+      <a href="{{ url_for('home_page') }}"
+         class="focus-ring w-fit rounded text-sm font-semibold text-white/75 transition hover:text-sun">
+        Back to home ↑
+      </a>
+    </div>
+  </footer>
+
+
+  <!-- NAVBAR MOBILE MENU + PROFILE PICTURE -->
   <script>
-document.addEventListener("DOMContentLoaded", async () => {
-    try {
-        const res = await fetch("http://127.0.0.1:5000/profile", {
-            credentials: "include" 
+    document.addEventListener('DOMContentLoaded', () => {
+      // Mobile navigation
+      const toggle = document.getElementById('menu-toggle');
+      const links = document.getElementById('nav-links');
+
+      if (toggle && links) {
+        toggle.addEventListener('click', () => {
+          const isOpen = toggle.getAttribute('aria-expanded') !== 'true';
+
+          links.classList.toggle('hidden', !isOpen);
+          links.classList.toggle('flex', isOpen);
+
+          toggle.setAttribute('aria-expanded', String(isOpen));
+          toggle.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
+          toggle.textContent = isOpen ? '✕' : '☰';
         });
-        const data = await res.json();
-        if (data && !data.error && data.foto_url) {
-            document.getElementById("navbar-pic").src = "/static/" + data.foto_url;
+      }
+
+      // Profile picture
+      const pic = document.getElementById('navbar-pic');
+
+      async function loadProfilePicture() {
+        if (!pic) return;
+
+        try {
+          const response = await fetch('/profile', {
+            credentials: 'include'
+          });
+
+          if (!response.ok) return;
+
+          const data = await response.json();
+
+          if (data && !data.error && data.foto_url) {
+            const photoPath = data.foto_url;
+
+            if (/^https?:\/\//i.test(photoPath)) {
+              pic.src = photoPath;
+            } else if (photoPath.startsWith('/static/')) {
+              pic.src = photoPath;
+            } else {
+              pic.src = '/static/' + photoPath.replace(/^\/+/, '');
+            }
+          }
+        } catch (error) {
+          console.error('Error loading profile picture:', error);
         }
-    } catch (err) {
-        console.error("Error cargando foto:", err);
-    }
-});
-</script>
+      }
+
+      if (pic) {
+        pic.addEventListener('error', () => {
+          pic.src = "{{ url_for('static', filename='default.png') }}";
+        }, { once: true });
+      }
+
+      loadProfilePicture();
+    });
+  </script>
 
 </body>
 </html>
+```
